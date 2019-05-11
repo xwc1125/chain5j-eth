@@ -1,6 +1,12 @@
 Troubleshooting
 ===============
 
+Do you have a sample web3j project
+----------------------------------
+
+Yes, refer to the web3j sample project outlined in the :doc:`quickstart`.
+
+
 I'm submitting a transaction, but it's not being mined
 ------------------------------------------------------
 After creating and sending a transaction, you receive a transaction hash, however calling
@@ -38,21 +44,24 @@ being too low. Please refer to the section :ref:`nonce` for more information.
 I want to see details of the JSON-RPC requests and responses
 ------------------------------------------------------------
 
-Set the following system properties in your main class or project configuration::
+web3j uses the `SLF4J <https://www.slf4j.org/>`_ logging facade, which you can easily integrate
+with your preferred logging framework. One lightweight approach is to use
+`LOGBack <https://logback.qos.ch/>`_, which is already configured in the integration-tests module.
 
-   // For HTTP connections
-   System.setProperty("org.apache.commons.logging.Log","org.apache.commons.logging.impl.SimpleLog");
-   System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-   System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "DEBUG");
+Include the LOGBack dependencies listed in
+`integration-tests/build.gradle <https://github.com/web3j/web3j/blob/master/integration-tests/build.gradle#L7>`_
+and associated log configuration as per
+`integration-tests/src/test/resources/logback-test.xml <https://github.com/web3j/web3j/blob/master/integration-tests/src/test/resources/logback-test.xml>`_.
 
-   // For IPC connections
-   System.setProperty("org.apache.commons.logging.simplelog.log.org.web3j.protocol.ipc", "DEBUG");
+**Note:** if you are configuring logging for an application (not tests), you will need to ensure that
+the Logback dependencies are configured as *compile* dependencies, and that the configuration file
+is named and located in *src/main/resources/logback.xml*.
 
 
 I want to obtain some Ether on Testnet, but don't want to have to mine it myself
 --------------------------------------------------------------------------------
 
-Head to the `Ethereum Ropsten Faucet <http://faucet.ropsten.be:3001/>`_ to request one free Ether.
+Please refer to the :ref:`ethereum-testnets` for how to obtain some Ether.
 
 
 How do I obtain the return value from a smart contract method invoked by a transaction?
@@ -67,7 +76,7 @@ be marked as
 functions. :ref:`smart-contract-wrappers` created by web3j handle these differences for you.
 
 The following StackExchange
-`post <http://ethereum.stackexchange.com/questions/765/what-is-the-difference-between-a-transaction-and-a-call>`_
+`post <http://ethereum.stackexchange.com/questions/765/what-is-the-difference-between-a-transaction-and-a-call>`__
 is useful for background.
 
 
@@ -84,7 +93,7 @@ of the transaction. This is demonstrated below::
    String hexValue = Numeric.toHexString(signedMessage);
 
    EthSendTransaction ethSendTransaction =
-           parity.ethSendRawTransaction(hexValue).sendAsync().get();
+           web3j.ethSendRawTransaction(hexValue).send();
    String transactionHash = ethSendTransaction.getTransactionHash();
    ...
 
@@ -92,8 +101,43 @@ of the transaction. This is demonstrated below::
 text.
 
 The following StackExchange
-`post <http://ethereum.stackexchange.com/questions/2466/how-do-i-send-an-arbitary-message-to-an-ethereum-address>`_
+`post <http://ethereum.stackexchange.com/questions/2466/how-do-i-send-an-arbitary-message-to-an-ethereum-address>`__
 is useful for background.
+
+
+I've generated my smart contract wrapper, but the binary for the smart contract is empty?
+-----------------------------------------------------------------------------------------
+
+If you have defined an interface in Solidity, but one of your method implementations doesn't
+match the original interface definitions, the produced binary will be blank.
+
+In the following example::
+
+   contract Web3jToken is ERC20Basic, Ownable {
+       ...
+       function transfer(address _from, address _to, uint256 _value) onlyOwner returns (bool) {
+       ...
+   }
+
+We forgot to define the *from* parameter in one of the inherited contracts::
+
+   contract ERC20Basic {
+       ...
+       function transfer(address to, uint256 value) returns (bool);
+       ...
+   }
+
+The Solidity compiler will not complain about this, however, the produced binary file for the
+Web3jToken will be blank.
+
+
+My ENS lookups are failing
+--------------------------
+
+Are you sure that you are connecting to the correct network to perform the lookup?
+
+If web3j is telling you that the node is not in sync, you may need to change the *syncThreshold*
+in the :ref:`ENS resolver <ens-implementation>`.
 
 
 Do you have a project donation address?

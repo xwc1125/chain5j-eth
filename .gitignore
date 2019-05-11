@@ -15,7 +15,9 @@ hs_err_pid*
 ### Gradle template
 .gradle
 /build
-gradle.properties
+/out
+*/build/
+*/out/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -31,6 +33,9 @@ gradle-app.setting
 
 .idea
 *.iml
+*.ipr
+*.iws
+
 geth.sh
 
 # Sphinx generated docs
@@ -38,4 +43,3 @@ docs/build
 
 # OS X
 .DS_Store
-

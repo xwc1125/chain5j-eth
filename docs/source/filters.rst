@@ -20,10 +20,10 @@ if there are any updates to your filters due to the synchronous nature of HTTP a
 Additionally the block and transaction filters only provide the transaction or block hash, so a
 further request is required to obtain the actual transaction or block referred to by the hash.
 
-web3j's managed `Filter <https://github.com/web3j/web3j/blob/master/src/main/java/org/web3j/protocol/core/filters/Filter.java>`_
+web3j's managed `Filter <https://github.com/web3j/web3j/blob/master/core/src/main/java/org/web3j/protocol/core/filters/Filter.java>`_
 implementation address these issues, so you have a fully asynchronous event based API for working
 with filters. It uses `RxJava <https://github.com/ReactiveX/RxJava>`_'s
-`Observables <http://reactivex.io/documentation/observable.html>`_ which provides a consistent API
+`Flowables <http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Flowable.html>`_ which provides a consistent API
 for working with events, which facilitates the chaining together of JSON-RPC calls via
 functional composition.
 
@@ -36,20 +36,20 @@ Block and transaction filters
 To receive all new blocks as they are added to the blockchain (the false parameter specifies that
 we only want the blocks, not the embedded transactions too)::
 
-   Subscription subscription = web3j.blockObservable(false).subscribe(block -> {
+   Subscription subscription = web3j.blockFlowable(false).subscribe(block -> {
        ...
    });
 
 To receive all new transactions as they are added to the blockchain::
 
-   Subscription subscription = web3j.transactionObservable().subscribe(tx -> {
+   Subscription subscription = web3j.transactionFlowable().subscribe(tx -> {
        ...
    });
 
 To receive all pending transactions as they are submitted to the network (i.e. before they have
 been grouped into a block together)::
 
-   Subscription subscription = web3j.pendingTransactionObservable().subscribe(tx -> {
+   Subscription subscription = web3j.pendingTransactionFlowable().subscribe(tx -> {
        ...
    });
 
@@ -59,7 +59,7 @@ Subscriptions should always be cancelled when no longer required via *unsubscrib
 
 Other callbacks are also provided which provide simply the block or transaction hashes,
 for details of these refer to the
-`Web3jRx <https://github.com/web3j/web3j/blob/master/src/main/java/org/web3j/protocol/rx/Web3jRx.java>`_
+`Web3jRx <https://github.com/web3j/web3j/blob/master/core/src/main/java/org/web3j/protocol/rx/Web3jRx.java>`_
 interface.
 
 
@@ -70,7 +70,7 @@ web3j also provides filters for replaying block and transaction history.
 
 To replay a range of blocks from the blockchain::
 
-   Subscription subscription = web3j.replayBlocksObservable(
+   Subscription subscription = web3j.replayBlocksFlowable(
            <startBlockNumber>, <endBlockNumber>, <fullTxObjects>)
            .subscribe(block -> {
                ...
@@ -78,17 +78,17 @@ To replay a range of blocks from the blockchain::
 
 To replay the individual transactions contained within a range of blocks::
 
-   Subscription subscription = web3j.replayTransactionsObservable(
+   Subscription subscription = web3j.replayTransactionsFlowable(
            <startBlockNumber>, <endBlockNumber>)
            .subscribe(tx -> {
                ...
    });
 
 You can also get web3j to replay all blocks up to the most current, and provide notification
-(via the submitted Observable) once you've caught up::
+(via the submitted Flowable) once you've caught up::
 
-   Subscription subscription = web3j.catchUpToLatestBlockObservable(
-           <startBlockNumber>, <fullTxObjects>, <onCompleteObservable>)
+   Subscription subscription = web3j.replayPastBlocksFlowable(
+           <startBlockNumber>, <fullTxObjects>, <onCompleteFlowable>)
            .subscribe(block -> {
                ...
    });
@@ -96,7 +96,7 @@ You can also get web3j to replay all blocks up to the most current, and provide 
 Or, if you'd rather replay all blocks to the most current, then be notified of new subsequent
 blocks being created::
 
-   Subscription subscription = web3j.catchUpToLatestAndSubscribeToNewBlocksObservable(
+   Subscription subscription = web3j.replayPastAndFutureBlocksFlowable(
            <startBlockNumber>, <fullTxObjects>)
            .subscribe(block -> {
                ...
@@ -104,16 +104,18 @@ blocks being created::
 
 As above, but with transactions contained within blocks::
 
-   Subscription subscription = web3j.catchUpToLatestAndSubscribeToNewTransactionsObservable(
+   Subscription subscription = web3j.replayPastAndFutureTransactionsFlowable(
            <startBlockNumber>)
            .subscribe(tx -> {
                ...
    });
 
 All of the above filters are exported via the
-`Web3jRx <https://github.com/web3j/web3j/blob/master/src/main/java/org/web3j/protocol/rx/Web3jRx.java>`_
+`Web3jRx <https://github.com/web3j/web3j/blob/master/core/src/main/java/org/web3j/protocol/rx/Web3jRx.java>`_
 interface.
 
+
+.. _filters-and-events:
 
 Topic filters and EVM events
 ----------------------------
@@ -122,11 +124,11 @@ Topic filters capture details of Ethereum Virtual Machine (EVM) events taking pl
 These events are created by smart contracts and stored in the transaction log associated with a
 smart contract.
 
-The `Solidity documentation <http://solidity.readthedocs.io/en/develop/contracts.html?highlight=event#events>`_
+The `Solidity documentation <http://solidity.readthedocs.io/en/develop/contracts.html#events>`_
 provides a good overview of EVM events.
 
 You use the
-`EthFilter <https://github.com/web3j/web3j/blob/master/src/main/java/org/web3j/protocol/core/methods/request/EthFilter.java>`_
+`EthFilter <https://github.com/web3j/web3j/blob/master/core/src/main/java/org/web3j/protocol/core/methods/request/EthFilter.java>`_
 type to specify the topics that you wish to apply to the filter. This can include the address of
 the smart contract you wish to apply the filter to. You can also provide specific topics to filter
 on. Where the individual topics represent indexed parameters on the smart contract::
@@ -137,7 +139,7 @@ on. Where the individual topics represent indexed parameters on the smart contra
 
 This filter can then be created using a similar syntax to the block and transaction filters above::
 
-   web3j.ethLogObservable(filter).subscribe(log -> {
+   web3j.ethLogFlowable(filter).subscribe(log -> {
        ...
    });
 
@@ -154,31 +156,31 @@ A note on functional composition
 --------------------------------
 
 In addition to *send()* and *sendAsync*, all JSON-RPC method implementations in web3j support the
-*observable()* method to create an Observable to execute the request asynchronously. This makes it
+*flowable()* method to create a Flowable to execute the request asynchronously. This makes it
 very straight forwards to compose JSON-RPC calls together into new functions.
 
 For instance, the
-`blockObservable <https://github.com/web3j/web3j/blob/master/src/main/java/org/web3j/protocol/rx/JsonRpc2_0Rx.java>`_ is
+`blockFlowable <https://github.com/web3j/web3j/blob/master/core/src/main/java/org/web3j/protocol/rx/JsonRpc2_0Rx.java>`_ is
 itself composed of a number of separate JSON-RPC calls::
 
-   public Observable<EthBlock> blockObservable(
+   public Flowable<EthBlock> blockFlowable(
            boolean fullTransactionObjects, long pollingInterval) {
-       return this.ethBlockHashObservable(pollingInterval)
+       return this.ethBlockHashFlowable(pollingInterval)
                .flatMap(blockHash ->
-                       web3j.ethGetBlockByHash(blockHash, fullTransactionObjects).observable());
+                       web3j.ethGetBlockByHash(blockHash, fullTransactionObjects).flowable());
    }
 
-Here we first create an observable that provides notifications of the block hash of each newly
+Here we first create a flowable that provides notifications of the block hash of each newly
 created block. We then use *flatMap* to invoke a call to *ethGetBlockByHash* to obtain the full
-block details which is what is passed to the subscriber of the observable.
+block details which is what is passed to the subscriber of the flowable.
 
 
 Further examples
 ----------------
 
 Please refer to the integration test
-`ObservableIT <https://github.com/web3j/web3j/blob/master/src/integration-test/java/org/web3j/protocol/core/ObservableIT.java>`_
+`FlowableIT <https://github.com/web3j/web3j/blob/master/integration-tests/src/test/java/org/web3j/protocol/core/FlowableIT.java>`_
 for further examples.
 
 For a demonstration of using the manual filter API, you can take a look at the test
-`EventFilterIT <https://github.com/web3j/web3j/blob/master/src/integration-test/java/org/web3j/protocol/scenarios/EventFilterIT.java>`_..
+`EventFilterIT <https://github.com/web3j/web3j/blob/master/integration-tests/src/test/java/org/web3j/protocol/scenarios/EventFilterIT.java>`_..
