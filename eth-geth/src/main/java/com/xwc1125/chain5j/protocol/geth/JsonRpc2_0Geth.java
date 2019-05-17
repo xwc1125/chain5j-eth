@@ -23,7 +23,7 @@ import com.xwc1125.chain5j.protocol.websocket.events.SyncingNotfication;
 public class JsonRpc2_0Geth extends JsonRpc2_0Admin implements Geth {
 
     public JsonRpc2_0Geth(Web3jService web3jService) {
-        super(web3jService, clientIdentifier + "");
+        super(web3jService, "eth");
     }
 
     public JsonRpc2_0Geth(Web3jService web3jService, String clientIdentifier) {

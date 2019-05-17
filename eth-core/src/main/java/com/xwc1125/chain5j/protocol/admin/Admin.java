@@ -13,30 +13,34 @@ import com.xwc1125.chain5j.protocol.core.methods.request.Transaction;
 import com.xwc1125.chain5j.protocol.core.methods.response.EthSendTransaction;
 
 /**
- * JSON-RPC Request object building factory for common Parity and Geth. 
+ * JSON-RPC Request object building factory for common Parity and Geth.
  */
 public interface Admin extends Web3j {
 
     static Admin build(Web3jService web3jService) {
-        return new JsonRpc2_0Admin(web3jService);
+        return new JsonRpc2_0Admin(web3jService, "eth");
     }
-    
+
+    static Admin build(Web3jService web3jService, String clientIdentifier) {
+        return new JsonRpc2_0Admin(web3jService, clientIdentifier);
+    }
+
     static Admin build(
-            Web3jService web3jService, long pollingInterval,
+            Web3jService web3jService, String clientIdentifier, long pollingInterval,
             ScheduledExecutorService scheduledExecutorService) {
-        return new JsonRpc2_0Admin(web3jService, pollingInterval, scheduledExecutorService);
+        return new JsonRpc2_0Admin(web3jService, clientIdentifier, pollingInterval, scheduledExecutorService);
     }
 
     public Request<?, PersonalListAccounts> personalListAccounts();
-    
+
     public Request<?, NewAccountIdentifier> personalNewAccount(String password);
-    
+
     public Request<?, PersonalUnlockAccount> personalUnlockAccount(
             String address, String passphrase, BigInteger duration);
-    
+
     public Request<?, PersonalUnlockAccount> personalUnlockAccount(
             String address, String passphrase);
-    
+
     public Request<?, EthSendTransaction> personalSendTransaction(
             Transaction transaction, String password);
 

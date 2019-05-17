@@ -16,6 +16,10 @@ import com.xwc1125.chain5j.protocol.core.methods.response.MinerStartResponse;
 
 public class JsonRpc2_0Pantheon extends JsonRpc2_0Web3j implements Pantheon {
     public JsonRpc2_0Pantheon(Web3jService web3jService) {
+        super(web3jService, "eth");
+    }
+
+    public JsonRpc2_0Pantheon(Web3jService web3jService, String clientIdentifier) {
         super(web3jService, clientIdentifier);
     }
 
