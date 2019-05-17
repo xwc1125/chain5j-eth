@@ -11,8 +11,8 @@ public class SignedRawTransaction extends RawTransaction {
     private Sign.SignatureData signatureData;
 
     public SignedRawTransaction(BigInteger nonce, BigInteger gasPrice,
-            BigInteger gasLimit, String to, BigInteger value, String data,
-            Sign.SignatureData signatureData) {
+                                BigInteger gasLimit, String to, BigInteger value, String data,
+                                Sign.SignatureData signatureData) {
         super(nonce, gasPrice, gasLimit, to, value, data);
         this.signatureData = signatureData;
     }
@@ -29,7 +29,7 @@ public class SignedRawTransaction extends RawTransaction {
         } else {
             encodedTransaction = TransactionEncoder.encode(this, chainId.byteValue());
         }
-        byte v = signatureData.getV();
+        int v = signatureData.getV();
         byte[] r = signatureData.getR();
         byte[] s = signatureData.getS();
         Sign.SignatureData signatureDataV = new Sign.SignatureData(getRealV(v), r, s);
@@ -44,20 +44,20 @@ public class SignedRawTransaction extends RawTransaction {
         }
     }
 
-    private byte getRealV(byte v) {
+    private int getRealV(int v) {
         if (v == LOWER_REAL_V || v == (LOWER_REAL_V + 1)) {
             return v;
         }
-        byte realV = LOWER_REAL_V;
+        int realV = LOWER_REAL_V;
         int inc = 0;
-        if ((int) v % 2 == 0) {
+        if (v % 2 == 0) {
             inc = 1;
         }
-        return (byte) (realV + inc);
+        return realV + inc;
     }
 
     public Integer getChainId() {
-        byte v = signatureData.getV();
+        int v = signatureData.getV();
         if (v == LOWER_REAL_V || v == (LOWER_REAL_V + 1)) {
             return null;
         }

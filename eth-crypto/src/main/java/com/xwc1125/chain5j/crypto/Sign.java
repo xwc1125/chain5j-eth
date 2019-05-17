@@ -277,17 +277,17 @@ public class Sign {
     }
 
     public static class SignatureData {
-        private final byte v;
+        private final int v;
         private final byte[] r;
         private final byte[] s;
 
-        public SignatureData(byte v, byte[] r, byte[] s) {
+        public SignatureData(int v, byte[] r, byte[] s) {
             this.v = v;
             this.r = r;
             this.s = s;
         }
 
-        public byte getV() {
+        public int getV() {
             return v;
         }
 
