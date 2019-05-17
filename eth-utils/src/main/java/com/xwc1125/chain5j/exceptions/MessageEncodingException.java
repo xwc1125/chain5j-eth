@@ -1,0 +1,14 @@
+package com.xwc1125.chain5j.exceptions;
+
+/**
+ * Encoding exception.
+ */
+public class MessageEncodingException extends RuntimeException {
+    public MessageEncodingException(String message) {
+        super(message);
+    }
+
+    public MessageEncodingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
