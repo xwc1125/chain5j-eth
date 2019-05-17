@@ -14,19 +14,23 @@ import com.xwc1125.chain5j.protocol.websocket.events.PendingTransactionNotificat
 import com.xwc1125.chain5j.protocol.websocket.events.SyncingNotfication;
 
 /**
- * JSON-RPC Request object building factory for Geth. 
+ * JSON-RPC Request object building factory for Geth.
  */
 public interface Geth extends Admin {
     static Geth build(Web3jService web3jService) {
-        return new JsonRpc2_0Geth(web3jService);
+        return new JsonRpc2_0Geth(web3jService, "eth");
     }
-        
+
+    static Geth build(Web3jService web3jService, String clientIdentifier) {
+        return new JsonRpc2_0Geth(web3jService, clientIdentifier);
+    }
+
     Request<?, PersonalImportRawKey> personalImportRawKey(String keydata, String password);
 
     Request<?, BooleanResponse> personalLockAccount(String accountId);
-    
+
     Request<?, PersonalSign> personalSign(String message, String accountId, String password);
-    
+
     Request<?, PersonalEcRecover> personalEcRecover(String message, String signiture);
 
     Request<?, MinerStartResponse> minerStart(int threadCount);
@@ -38,13 +42,14 @@ public interface Geth extends Admin {
      * added to the pending state and is signed with a key that is available in the node.
      *
      * @return a {@link Flowable} instance that emits a notification when a new transaction is
-     *         added to the pending state
+     * added to the pending state
      */
     Flowable<PendingTransactionNotification> newPendingTransactionsNotifications();
 
     /**
      * Creates an {@link Flowable} instance that emits a notification when a node starts or stops
      * syncing.
+     *
      * @return a {@link Flowable} instance that emits changes to syncing status
      */
     Flowable<SyncingNotfication> syncingStatusNotifications();

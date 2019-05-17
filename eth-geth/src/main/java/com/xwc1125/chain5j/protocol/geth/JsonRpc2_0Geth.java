@@ -23,9 +23,13 @@ import com.xwc1125.chain5j.protocol.websocket.events.SyncingNotfication;
 public class JsonRpc2_0Geth extends JsonRpc2_0Admin implements Geth {
 
     public JsonRpc2_0Geth(Web3jService web3jService) {
-        super(web3jService);
+        super(web3jService, clientIdentifier + "");
     }
-    
+
+    public JsonRpc2_0Geth(Web3jService web3jService, String clientIdentifier) {
+        super(web3jService, clientIdentifier);
+    }
+
     @Override
     public Request<?, PersonalImportRawKey> personalImportRawKey(
             String keydata, String password) {
@@ -50,7 +54,7 @@ public class JsonRpc2_0Geth extends JsonRpc2_0Admin implements Geth {
             String message, String accountId, String password) {
         return new Request<>(
                 "personal_sign",
-                Arrays.asList(message,accountId,password),
+                Arrays.asList(message, accountId, password),
                 web3jService,
                 PersonalSign.class);
     }
@@ -60,7 +64,7 @@ public class JsonRpc2_0Geth extends JsonRpc2_0Admin implements Geth {
             String hexMessage, String signedMessage) {
         return new Request<>(
                 "personal_ecRecover",
-                Arrays.asList(hexMessage,signedMessage),
+                Arrays.asList(hexMessage, signedMessage),
                 web3jService,
                 PersonalEcRecover.class);
     }
@@ -83,14 +87,15 @@ public class JsonRpc2_0Geth extends JsonRpc2_0Admin implements Geth {
                 BooleanResponse.class);
     }
 
+    @Override
     public Flowable<PendingTransactionNotification> newPendingTransactionsNotifications() {
         return web3jService.subscribe(
                 new Request<>(
-                        "eth_subscribe",
+                        clientIdentifier + "_subscribe",
                         Arrays.asList("newPendingTransactions"),
                         web3jService,
                         EthSubscribe.class),
-                "eth_unsubscribe",
+                clientIdentifier + "_unsubscribe",
                 PendingTransactionNotification.class
         );
     }
@@ -99,11 +104,11 @@ public class JsonRpc2_0Geth extends JsonRpc2_0Admin implements Geth {
     public Flowable<SyncingNotfication> syncingStatusNotifications() {
         return web3jService.subscribe(
                 new Request<>(
-                        "eth_subscribe",
+                        clientIdentifier + "_subscribe",
                         Arrays.asList("syncing"),
                         web3jService,
                         EthSubscribe.class),
-                "eth_unsubscribe",
+                clientIdentifier + "_unsubscribe",
                 SyncingNotfication.class
         );
     }
