@@ -36,7 +36,7 @@ public class TransactionEncoder {
 
     public static Sign.SignatureData createEip155SignatureData(
             Sign.SignatureData signatureData, int chainId) {
-        int v =  (signatureData.getV() + (chainId << 1) + 8);
+        int v = (signatureData.getV() + (chainId << 1) + 8);
 
         return new Sign.SignatureData(
                 v, signatureData.getR(), signatureData.getS());
@@ -48,7 +48,7 @@ public class TransactionEncoder {
 
     public static byte[] encode(RawTransaction rawTransaction, int chainId) {
         Sign.SignatureData signatureData = new Sign.SignatureData(
-                chainId, new byte[] {}, new byte[] {});
+                chainId, new byte[]{}, new byte[]{});
         return encode(rawTransaction, signatureData);
     }
 
@@ -72,6 +72,16 @@ public class TransactionEncoder {
             // addresses that start with zeros should be encoded with the zeros included, not
             // as numeric values
             result.add(RlpString.create(Numeric.hexStringToByteArray(to)));
+        } else {
+            result.add(RlpString.create(""));
+        }
+
+        // token
+        String token = rawTransaction.getToken();
+        if (token != null && token.length() > 0) {
+            // addresses that start with zeros should be encoded with the zeros included, not
+            // as numeric values
+            result.add(RlpString.create(Numeric.hexStringToByteArray(token)));
         } else {
             result.add(RlpString.create(""));
         }
