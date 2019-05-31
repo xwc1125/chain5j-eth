@@ -6,7 +6,7 @@
 
     <groupId>com.xwc1125.chain5j</groupId>
     <artifactId>eth</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
 
     <packaging>pom</packaging>
 
@@ -16,7 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <chain5j.eth.version>4.0.0</chain5j.eth.version>
         <bouncycastleVersion>1.60</bouncycastleVersion>
         <jacksonVersion>2.8.5</jacksonVersion>
         <javapoetVersion>1.7.0</javapoetVersion>
@@ -114,10 +113,14 @@
                 </plugin>
 
                 <!--子项目不需要配置version-->
+                <!-- mvn -N versions:update-child-modules-->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.7</version>
+                    <configuration>
+                        <generateBackupPoms>false</generateBackupPoms>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.xwc1125.chain5j</groupId>
         <artifactId>eth</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,17 +15,17 @@
         <dependency>
             <groupId>com.xwc1125.chain5j</groupId>
             <artifactId>eth-codegen</artifactId>
-            <version>${chain5j.eth.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.xwc1125.chain5j</groupId>
             <artifactId>eth-infura</artifactId>
-            <version>${chain5j.eth.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.xwc1125.chain5j</groupId>
             <artifactId>eth-contracts</artifactId>
-            <version>${chain5j.eth.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
