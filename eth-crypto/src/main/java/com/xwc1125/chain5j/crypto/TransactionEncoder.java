@@ -76,14 +76,12 @@ public class TransactionEncoder {
             result.add(RlpString.create(""));
         }
 
-        // token
+        // token (if it is not,does not add to rlp)
         String token = rawTransaction.getToken();
         if (token != null && token.length() > 0) {
             // addresses that start with zeros should be encoded with the zeros included, not
             // as numeric values
             result.add(RlpString.create(Numeric.hexStringToByteArray(token)));
-        } else {
-            result.add(RlpString.create(""));
         }
 
         result.add(RlpString.create(rawTransaction.getValue()));

@@ -33,7 +33,8 @@ public abstract class Service implements Web3jService {
 
         try (InputStream result = performIO(payload)) {
             if (result != null) {
-                return objectMapper.readValue(result, responseType);
+                T readValue = objectMapper.readValue(result, responseType);
+                return readValue;
             } else {
                 return null;
             }
