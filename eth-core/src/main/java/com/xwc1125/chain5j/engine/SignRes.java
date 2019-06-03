@@ -28,4 +28,14 @@ public class SignRes {
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("SignRes{");
+        sb.append("raw_transaction='").append(raw_transaction).append('\'');
+        sb.append(", transaction_hash='").append(transaction_hash).append('\'');
+        sb.append(", timestamp=").append(timestamp);
+        sb.append('}');
+        return sb.toString();
+    }
 }

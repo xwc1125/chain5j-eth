@@ -103,9 +103,12 @@ public class TransactionEngine {
      * @Author: xwc1125
      * @Date: 2019-05-31 19:21:56
      */
-    public List<Type> decodeTransaction(Web3j web3j, String from, String to, String method, List<Type> inputParameters, List<TypeReference<?>> outputParameters) throws Exception {
-        if (outputParameters == null) {
+    public static List<Type> decodeTransaction(Web3j web3j, String from, String to, String method, List<Type> inputParameters, List<TypeReference<?>> outputParameters) throws Exception {
+        if (outputParameters == null || outputParameters.size() == 0) {
             outputParameters = Collections.<TypeReference<?>>emptyList();
+        }
+        if (inputParameters == null || inputParameters.size() == 0) {
+            inputParameters = Collections.<Type>emptyList();
         }
         Function function = new Function(method, inputParameters, outputParameters);
         String dataHex = FunctionEncoder.encode(function);

@@ -20,6 +20,7 @@ import java.security.SecureRandom;
  */
 public class WalletEngine {
     private static final String HEX_PREFIX = "0x";
+    public static final int HARDENED_BIT = 0x80000000;
 
     private static final SecureRandom secureRandom = SecureRandomUtils.secureRandom();
 
@@ -37,8 +38,11 @@ public class WalletEngine {
         if (!MnemonicUtils.validateMnemonic(mnemonics)) {
             throw new Exception("mnemonics is wrong");
         }
-        Credentials credentials = Bip44WalletUtils.loadBip44Credentials(password, mnemonics);
-        return credentials.getEcKeyPair();
+        byte[] seed = MnemonicUtils.generateSeed(mnemonics, password);
+        Bip32ECKeyPair masterKeypair = Bip32ECKeyPair.generateKeyPair(seed);
+        // m/44'/60'/0'/0
+        final int[] path = {44 | HARDENED_BIT, 60 | HARDENED_BIT, 0 | HARDENED_BIT, 0};
+        return Bip32ECKeyPair.deriveKeyPair(masterKeypair, path);
     }
 
     /**

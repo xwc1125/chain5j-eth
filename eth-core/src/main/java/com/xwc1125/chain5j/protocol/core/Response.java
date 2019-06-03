@@ -105,6 +105,16 @@ public class Response<T> {
         }
 
         @Override
+        public String toString() {
+            final StringBuffer sb = new StringBuffer("Error{");
+            sb.append("code=").append(code);
+            sb.append(", message='").append(message).append('\'');
+            sb.append(", data='").append(data).append('\'');
+            sb.append('}');
+            return sb.toString();
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
