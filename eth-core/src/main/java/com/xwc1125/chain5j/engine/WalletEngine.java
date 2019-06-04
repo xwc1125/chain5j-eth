@@ -1,6 +1,7 @@
 package com.xwc1125.chain5j.engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xwc1125.chain5j.bip44.HdKeyNode;
 import com.xwc1125.chain5j.crypto.*;
 import com.xwc1125.chain5j.protocol.ObjectMapperFactory;
 import com.xwc1125.chain5j.utils.Numeric;
@@ -24,6 +25,10 @@ public class WalletEngine {
 
     private static final SecureRandom secureRandom = SecureRandomUtils.secureRandom();
 
+    public static ECKeyPair generateKeyPair(String mnemonics) throws Exception {
+        return generateKeyPair(mnemonics, "", null);
+    }
+
     /**
      * Description: generate key pair to create wallet
      * </p>
@@ -35,18 +40,56 @@ public class WalletEngine {
      * @Date: 2019-05-31 16:55:14
      */
     public static ECKeyPair generateKeyPair(String mnemonics, String password) throws Exception {
+        return generateKeyPair(mnemonics, password, null);
+    }
+
+    public static ECKeyPair generateKeyPair(String mnemonics, String password, int[] childNodeArray) throws Exception {
         if (!MnemonicUtils.validateMnemonic(mnemonics)) {
             throw new Exception("mnemonics is wrong");
         }
         byte[] seed = MnemonicUtils.generateSeed(mnemonics, password);
-        Bip32ECKeyPair masterKeypair = Bip32ECKeyPair.generateKeyPair(seed);
-        // m/44'/60'/0'/0
-        final int[] path = {44 | HARDENED_BIT, 60 | HARDENED_BIT, 0 | HARDENED_BIT, 0};
-        return Bip32ECKeyPair.deriveKeyPair(masterKeypair, path);
+        return createBip44NodeFromSeed(seed, childNodeArray);
     }
 
     /**
-     * Description: TODO
+     * bip44 路径为"m/44'/60'/0'／0／0"，m/44'/60'为ethereum规定的路径，均为hardened child node。
+     * 其后的/0'/0/0可传入。注意第一个0'调用createHardenedChildNode,其他两个调用createChildNode
+     *
+     * @param seed
+     * @return
+     */
+    private static ECKeyPair createBip44NodeFromSeed(byte[] seed, int[] childNodeArray) {
+        HdKeyNode node = null;
+        if (childNodeArray == null || childNodeArray.length < 3) {
+            node = HdKeyNode.fromSeed(seed).createHardenedChildNode(44).createHardenedChildNode(60).createHardenedChildNode(0).createChildNode(0).createChildNode(0);
+        } else {
+            StringBuffer buffer = new StringBuffer("m");
+            for (int i = 0, len = childNodeArray.length; i < len; i++) {
+                buffer.append("/").append(childNodeArray[i]);
+            }
+            String childNodeReg = buffer.toString();
+            switch (childNodeReg) {
+                case "m/44/60/0/0/0":
+                    node = HdKeyNode.fromSeed(seed).createHardenedChildNode(44).createHardenedChildNode(60).createHardenedChildNode(0).createChildNode(0).createChildNode(0);
+                    break;
+                case "m/44/60/1/0/0":
+                    node = HdKeyNode.fromSeed(seed).createHardenedChildNode(44).createHardenedChildNode(60).createHardenedChildNode(1).createChildNode(0).createChildNode(0);
+                    break;
+                case "m/44/60/0/0":
+                    node = HdKeyNode.fromSeed(seed).createHardenedChildNode(44).createHardenedChildNode(60).createHardenedChildNode(0).createChildNode(0);
+                    break;
+            }
+        }
+        if (node == null) {
+            return null;
+        }
+        byte[] privateKeyByte = node.getPrivateKey().getPrivateKeyBytes();
+        ECKeyPair ecKeyPair = ECKeyPair.create(privateKeyByte);
+        return ecKeyPair;
+    }
+
+    /**
+     * Description:
      * </p>
      *
      * @param password
@@ -181,8 +224,7 @@ public class WalletEngine {
      * @throws CipherException
      */
     public static Credentials loadCredentialsByMnemonics(String mnemonics) throws Exception {
-        ECKeyPair ecKeyPair = generateKeyPair(mnemonics, null);
-
+        ECKeyPair ecKeyPair = generateKeyPair(mnemonics);
         return loadCredentialsByECKeyPair(ecKeyPair);
     }
 

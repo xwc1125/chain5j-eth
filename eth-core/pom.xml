@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.xwc1125.chain5j</groupId>
         <artifactId>eth</artifactId>
-        <version>4.1.1</version>
+        <version>4.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -61,6 +61,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4jVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
         </dependency>
     </dependencies>
 
