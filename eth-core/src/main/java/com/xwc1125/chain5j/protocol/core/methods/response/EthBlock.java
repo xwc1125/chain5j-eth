@@ -74,8 +74,8 @@ public class EthBlock extends Response<EthBlock.Block> {
 
         public Block(String number, String hash, String parentHash, String nonce,
                      String sha3Uncles, String logsBloom, String transactionsRoot,
-                     String stateRoot, String receiptsRoot, String author, String miner, 
-                     String mixHash, String difficulty, String totalDifficulty, String extraData, 
+                     String stateRoot, String receiptsRoot, String author, String miner,
+                     String mixHash, String difficulty, String totalDifficulty, String extraData,
                      String size, String gasLimit, String gasUsed, String timestamp,
                      List<TransactionResult> transactions, List<String> uncles,
                      List<String> sealFields) {
