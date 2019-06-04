@@ -2,6 +2,9 @@ package com.xwc1125.chain5j.protocol.core.methods.response;
 
 import java.math.BigInteger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xwc1125.chain5j.protocol.ObjectMapperFactory;
 import com.xwc1125.chain5j.utils.Numeric;
 
 /**
@@ -331,4 +334,5 @@ public class Transaction {
         result = 31 * result + BigInteger.valueOf(getV()).hashCode();
         return result;
     }
+
 }
