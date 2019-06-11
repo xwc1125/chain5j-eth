@@ -194,7 +194,11 @@ public class WalletEngine {
      * @return
      */
     public static Credentials loadCredentialsByECKeyPair(ECKeyPair ecKeyPair) {
-        return Credentials.create(ecKeyPair);
+        return Credentials.create(null, ecKeyPair);
+    }
+
+    public static Credentials loadCredentialsByECKeyPair(String icapPrefix, ECKeyPair ecKeyPair) {
+        return Credentials.create(icapPrefix, ecKeyPair);
     }
 
     /**
@@ -208,11 +212,16 @@ public class WalletEngine {
      */
     public static Credentials loadCredentialsByKeyStore(String password, String keystoreContent)
             throws IOException, CipherException {
+        return loadCredentialsByKeyStore(null, password, keystoreContent);
+    }
+
+    public static Credentials loadCredentialsByKeyStore(String icapPrefix, String password, String keystoreContent)
+            throws IOException, CipherException {
         ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
         WalletFile walletFile = objectMapper.readValue(keystoreContent, WalletFile.class);
         ECKeyPair ecKeyPair = Wallet.decrypt(password, walletFile);
 
-        return loadCredentialsByECKeyPair(ecKeyPair);
+        return loadCredentialsByECKeyPair(icapPrefix, ecKeyPair);
     }
 
     /**
@@ -224,8 +233,12 @@ public class WalletEngine {
      * @throws CipherException
      */
     public static Credentials loadCredentialsByMnemonics(String mnemonics) throws Exception {
+        return loadCredentialsByMnemonics(null, mnemonics);
+    }
+
+    public static Credentials loadCredentialsByMnemonics(String icapPrefix, String mnemonics) throws Exception {
         ECKeyPair ecKeyPair = generateKeyPair(mnemonics);
-        return loadCredentialsByECKeyPair(ecKeyPair);
+        return loadCredentialsByECKeyPair(icapPrefix, ecKeyPair);
     }
 
     public static ECKeyPair loadECKeyPairByPrivateKey(BigInteger privateKey) {
@@ -241,7 +254,11 @@ public class WalletEngine {
     }
 
     public static Credentials loadCredentialsByPrivateKey(BigInteger privateKey) {
-        return Credentials.create(loadECKeyPairByPrivateKey(privateKey));
+        return Credentials.create(null, loadECKeyPairByPrivateKey(privateKey));
+    }
+
+    public static Credentials loadCredentialsByPrivateKey(String icapPrefix, BigInteger privateKey) {
+        return Credentials.create(icapPrefix, loadECKeyPairByPrivateKey(privateKey));
     }
 
     /**
@@ -249,7 +266,11 @@ public class WalletEngine {
      * @return
      */
     public static Credentials loadCredentialsByPrivateKey(String privateKey) {
-        return Credentials.create(privateKey);
+        return Credentials.create(null, privateKey);
+    }
+
+    public static Credentials loadCredentialsByPrivateKey(String icapPrefix, String privateKey) {
+        return Credentials.create(icapPrefix, privateKey);
     }
 
     /**
@@ -270,9 +291,21 @@ public class WalletEngine {
      * @return
      */
     public static String getAddress(ECKeyPair ecKeyPair) {
-        String address = Keys.getAddress(ecKeyPair);
+        String address = Keys.getAddress(null, ecKeyPair);
         return HEX_PREFIX + address;
     }
+
+    /**
+     * 获取地址
+     *
+     * @param ecKeyPair
+     * @return
+     */
+    public static String getAddress(String icapPrefix, ECKeyPair ecKeyPair) {
+        String address = Keys.getAddress(icapPrefix, ecKeyPair);
+        return address;
+    }
+
 
     // =================地址大小写================
 

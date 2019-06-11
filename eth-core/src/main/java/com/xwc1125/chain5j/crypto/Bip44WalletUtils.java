@@ -10,28 +10,28 @@ public class Bip44WalletUtils extends WalletUtils {
     /**
      * Generates a BIP-44 compatible Ethereum wallet on top of BIP-39 generated seed.
      *
-     * @param password Will be used for both wallet encryption and passphrase for BIP-39 seed
+     * @param password             Will be used for both wallet encryption and passphrase for BIP-39 seed
      * @param destinationDirectory The directory containing the wallet
      * @return A BIP-39 compatible Ethereum wallet
      * @throws CipherException if the underlying cipher is not available
-     * @throws IOException if the destination cannot be written to
+     * @throws IOException     if the destination cannot be written to
      */
-    public static Bip39Wallet generateBip44Wallet(String password, File destinationDirectory)
+    public static Bip39Wallet generateBip44Wallet(String icapPrefix, String password, File destinationDirectory)
             throws CipherException, IOException {
-        return generateBip44Wallet(password, destinationDirectory, false);
+        return generateBip44Wallet(icapPrefix, password, destinationDirectory, false);
     }
 
     /**
      * Generates a BIP-44 compatible Ethereum wallet on top of BIP-39 generated seed.
      *
-     * @param password Will be used for both wallet encryption and passphrase for BIP-39 seed
+     * @param password             Will be used for both wallet encryption and passphrase for BIP-39 seed
      * @param destinationDirectory The directory containing the wallet
-     * @param testNet should use the testNet derive path
+     * @param testNet              should use the testNet derive path
      * @return A BIP-39 compatible Ethereum wallet
      * @throws CipherException if the underlying cipher is not available
-     * @throws IOException if the destination cannot be written to
+     * @throws IOException     if the destination cannot be written to
      */
-    public static Bip39Wallet generateBip44Wallet(String password, File destinationDirectory,
+    public static Bip39Wallet generateBip44Wallet(String icapPrefix, String password, File destinationDirectory,
                                                   boolean testNet)
             throws CipherException, IOException {
         byte[] initialEntropy = new byte[16];
@@ -43,7 +43,7 @@ public class Bip44WalletUtils extends WalletUtils {
         Bip32ECKeyPair masterKeypair = Bip32ECKeyPair.generateKeyPair(seed);
         Bip32ECKeyPair bip44Keypair = generateBip44KeyPair(masterKeypair, testNet);
 
-        String walletFile = generateWalletFile(password, bip44Keypair, destinationDirectory, false);
+        String walletFile = generateWalletFile(icapPrefix, password, bip44Keypair, destinationDirectory, false);
 
         return new Bip39Wallet(walletFile, mnemonic);
     }
@@ -65,14 +65,23 @@ public class Bip44WalletUtils extends WalletUtils {
     }
 
     public static Credentials loadBip44Credentials(String password, String mnemonic) {
-        return loadBip44Credentials(password, mnemonic, false);
+        return loadBip44Credentials(null, password, mnemonic, false);
+    }
+
+    public static Credentials loadBip44Credentials(String icapPrefix, String password, String mnemonic) {
+        return loadBip44Credentials(icapPrefix, password, mnemonic, false);
     }
 
     public static Credentials loadBip44Credentials(String password, String mnemonic,
                                                    boolean testNet) {
+        return loadBip44Credentials(null, password, mnemonic, testNet);
+    }
+
+    public static Credentials loadBip44Credentials(String icapPrefix, String password, String mnemonic,
+                                                   boolean testNet) {
         byte[] seed = MnemonicUtils.generateSeed(mnemonic, password);
         Bip32ECKeyPair masterKeypair = Bip32ECKeyPair.generateKeyPair(seed);
         Bip32ECKeyPair bip44Keypair = generateBip44KeyPair(masterKeypair, testNet);
-        return Credentials.create(bip44Keypair);
+        return Credentials.create(icapPrefix, bip44Keypair);
     }
 }

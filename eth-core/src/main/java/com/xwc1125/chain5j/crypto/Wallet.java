@@ -64,6 +64,11 @@ public class Wallet {
 
     public static WalletFile create(String password, ECKeyPair ecKeyPair, int n, int p)
             throws CipherException {
+        return create(null, password, ecKeyPair, n, p);
+    }
+
+    public static WalletFile create(String icapPrefix, String password, ECKeyPair ecKeyPair, int n, int p)
+            throws CipherException {
 
         byte[] salt = generateRandomBytes(32);
 
@@ -77,29 +82,39 @@ public class Wallet {
                 Numeric.toBytesPadded(ecKeyPair.getPrivateKey(), Keys.PRIVATE_KEY_SIZE);
 
         byte[] cipherText = performCipherOperation(
-                    Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
+                Cipher.ENCRYPT_MODE, iv, encryptKey, privateKeyBytes);
 
         byte[] mac = generateMac(derivedKey, cipherText);
 
-        return createWalletFile(ecKeyPair, cipherText, iv, salt, mac, n, p);
+        return createWalletFile(icapPrefix, ecKeyPair, cipherText, iv, salt, mac, n, p);
     }
 
     public static WalletFile createStandard(String password, ECKeyPair ecKeyPair)
             throws CipherException {
-        return create(password, ecKeyPair, N_STANDARD, P_STANDARD);
+        return createStandard(null, password, ecKeyPair);
+    }
+
+    public static WalletFile createStandard(String icapPrefix, String password, ECKeyPair ecKeyPair)
+            throws CipherException {
+        return create(icapPrefix, password, ecKeyPair, N_STANDARD, P_STANDARD);
     }
 
     public static WalletFile createLight(String password, ECKeyPair ecKeyPair)
             throws CipherException {
-        return create(password, ecKeyPair, N_LIGHT, P_LIGHT);
+        return createLight(null, password, ecKeyPair);
     }
 
-    private static WalletFile createWalletFile(
-            ECKeyPair ecKeyPair, byte[] cipherText, byte[] iv, byte[] salt, byte[] mac,
-            int n, int p) {
+    public static WalletFile createLight(String icapPrefix, String password, ECKeyPair ecKeyPair)
+            throws CipherException {
+        return create(icapPrefix, password, ecKeyPair, N_LIGHT, P_LIGHT);
+    }
+
+    private static WalletFile createWalletFile(String icapPrefix,
+                                               ECKeyPair ecKeyPair, byte[] cipherText, byte[] iv, byte[] salt, byte[] mac,
+                                               int n, int p) {
 
         WalletFile walletFile = new WalletFile();
-        walletFile.setAddress(Keys.getAddress(ecKeyPair));
+        walletFile.setAddress(Keys.getAddress(icapPrefix, ecKeyPair));
 
         WalletFile.Crypto crypto = new WalletFile.Crypto();
         crypto.setCipher(CIPHER);

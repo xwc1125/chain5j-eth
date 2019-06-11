@@ -1,5 +1,7 @@
 package com.xwc1125.chain5j.crypto;
 
+import com.xwc1125.chain5j.utils.StringUtils;
+
 import java.math.BigInteger;
 import java.security.SignatureException;
 
@@ -9,12 +11,14 @@ public class SignedRawTransaction extends RawTransaction {
     private static final int LOWER_REAL_V = 27;
 
     private Sign.SignatureData signatureData;
+    private String icapPrefix;
 
-    public SignedRawTransaction(BigInteger nonce, BigInteger gasPrice,
+    public SignedRawTransaction(String icapPrefix, BigInteger nonce, BigInteger gasPrice,
                                 BigInteger gasLimit, String to, BigInteger value, String data,
-                                Sign.SignatureData signatureData) {
-        super(nonce, gasPrice, gasLimit, to, value, data);
+                                Sign.SignatureData signatureData, Boolean hasToken) {
+        super(nonce, gasPrice, gasLimit, to, value, data, hasToken);
         this.signatureData = signatureData;
+        this.icapPrefix = icapPrefix;
     }
 
     public Sign.SignatureData getSignatureData() {
@@ -34,7 +38,10 @@ public class SignedRawTransaction extends RawTransaction {
         byte[] s = signatureData.getS();
         Sign.SignatureData signatureDataV = new Sign.SignatureData(getRealV(v), r, s);
         BigInteger key = Sign.signedMessageToKey(encodedTransaction, signatureDataV);
-        return "0x" + Keys.getAddress(key);
+        if (StringUtils.isNotEmpty(icapPrefix)) {
+            return Keys.getAddress(icapPrefix, key);
+        }
+        return "0x" + Keys.getAddress(icapPrefix, key);
     }
 
     public void verify(String from) throws SignatureException {

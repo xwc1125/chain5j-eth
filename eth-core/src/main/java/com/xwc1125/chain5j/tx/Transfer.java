@@ -31,12 +31,11 @@ public class Transfer extends ManagedTransaction {
      * recommended via {@link Transfer#sendFunds(String, BigDecimal, Convert.Unit)}.
      *
      * @param toAddress destination address
-     * @param value amount to send
-     * @param unit of specified send
-     *
+     * @param value     amount to send
+     * @param unit      of specified send
      * @return {@link Optional} containing our transaction receipt
-     * @throws ExecutionException if the computation threw an
-     *                            exception
+     * @throws ExecutionException   if the computation threw an
+     *                              exception
      * @throws InterruptedException if the current thread was interrupted
      *                              while waiting
      * @throws TransactionException if the transaction was not mined while waiting
@@ -62,7 +61,7 @@ public class Transfer extends ManagedTransaction {
         }
 
         String resolvedAddress = ensResolver.resolve(toAddress);
-        return send(resolvedAddress, "", weiValue.toBigIntegerExact(), gasPrice, gasLimit);
+        return send(resolvedAddress, "", weiValue.toBigIntegerExact(), gasPrice, gasLimit, false);
     }
 
     public static RemoteCall<TransactionReceipt> sendFunds(
@@ -81,9 +80,8 @@ public class Transfer extends ManagedTransaction {
      * fund transfers. For multiple, create an instance.
      *
      * @param toAddress destination address
-     * @param value amount to send
-     * @param unit of specified send
-     *
+     * @param value     amount to send
+     * @param unit      of specified send
      * @return {@link RemoteCall} containing executing transaction
      */
     public RemoteCall<TransactionReceipt> sendFunds(

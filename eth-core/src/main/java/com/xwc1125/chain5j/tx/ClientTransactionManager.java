@@ -39,7 +39,7 @@ public class ClientTransactionManager extends TransactionManager {
     @Override
     public EthSendTransaction sendTransaction(
             BigInteger gasPrice, BigInteger gasLimit, String to,
-            String data, BigInteger value)
+            String data, BigInteger value, Boolean hasToken)
             throws IOException {
 
         Transaction transaction = new Transaction(
