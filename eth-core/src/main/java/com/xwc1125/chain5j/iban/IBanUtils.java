@@ -49,7 +49,7 @@ public class IBanUtils extends BaseFunc {
      * @param iban
      * @return
      */
-    private static boolean isValid(String iban) {
+    public static boolean isValid(String iban) {
         return Modulo97.verifyCheckDigits(iban);
     }
 
