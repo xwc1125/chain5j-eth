@@ -71,7 +71,11 @@ public class TransactionEncoder {
         if (to != null && to.length() > 0) {
             // addresses that start with zeros should be encoded with the zeros included, not
             // as numeric values
-            result.add(RlpString.create(Numeric.hexStringToByteArray(to)));
+            if (to.startsWith("0x")) {
+                result.add(RlpString.create(Numeric.hexStringToByteArray(to)));
+            } else {
+                result.add(RlpString.create(to.getBytes()));
+            }
         } else {
             result.add(RlpString.create(""));
         }
@@ -82,6 +86,10 @@ public class TransactionEncoder {
             // addresses that start with zeros should be encoded with the zeros included, not
             // as numeric values
             result.add(RlpString.create(Numeric.hexStringToByteArray(token)));
+        } else {
+            if (rawTransaction.getHasToken()) {
+                result.add(RlpString.create(""));
+            }
         }
 
         result.add(RlpString.create(rawTransaction.getValue()));

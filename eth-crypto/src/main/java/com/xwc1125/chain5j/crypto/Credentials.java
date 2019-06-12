@@ -1,6 +1,7 @@
 package com.xwc1125.chain5j.crypto;
 
 import com.xwc1125.chain5j.utils.Numeric;
+import com.xwc1125.chain5j.utils.StringUtils;
 
 /**
  * Credentials wrapper.
@@ -24,16 +25,23 @@ public class Credentials {
     }
 
     public static Credentials create(ECKeyPair ecKeyPair) {
-        String address = Numeric.prependHexPrefix(Keys.getAddress(ecKeyPair));
+        return create(null, ecKeyPair);
+    }
+
+    public static Credentials create(String icapPrefix, ECKeyPair ecKeyPair) {
+        String address = Keys.getAddress(icapPrefix, ecKeyPair);
+        if (StringUtils.isEmpty(icapPrefix)) {
+            address = Numeric.prependHexPrefix(address);
+        }
         return new Credentials(ecKeyPair, address);
     }
 
-    public static Credentials create(String privateKey, String publicKey) {
-        return create(new ECKeyPair(Numeric.toBigInt(privateKey), Numeric.toBigInt(publicKey)));
+    public static Credentials create(String icapPrefix, String privateKey, String publicKey) {
+        return create(icapPrefix, new ECKeyPair(Numeric.toBigInt(privateKey), Numeric.toBigInt(publicKey)));
     }
 
-    public static Credentials create(String privateKey) {
-        return create(ECKeyPair.create(Numeric.toBigInt(privateKey)));
+    public static Credentials create(String icapPrefix, String privateKey) {
+        return create(icapPrefix, ECKeyPair.create(Numeric.toBigInt(privateKey)));
     }
 
     @Override

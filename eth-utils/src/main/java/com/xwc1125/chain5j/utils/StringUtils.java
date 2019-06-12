@@ -451,4 +451,8 @@ public class StringUtils {
         str = str.replaceAll("[^\\u0000-\\uFFFF]", "");
         return str;
     }
+
+    public static boolean hasPrefix(String str, String prefix) {
+        return str.startsWith(prefix);
+    }
 }

@@ -90,7 +90,7 @@ public class RawTransactionManager extends TransactionManager {
     @Override
     public EthSendTransaction sendTransaction(
             BigInteger gasPrice, BigInteger gasLimit, String to,
-            String data, BigInteger value) throws IOException {
+            String data, BigInteger value, Boolean hasToken) throws IOException {
 
         BigInteger nonce = getNonce();
 
@@ -100,11 +100,12 @@ public class RawTransactionManager extends TransactionManager {
                 gasLimit,
                 to,
                 value,
-                data);
+                data,
+                hasToken);
 
         return signAndSend(rawTransaction);
     }
-    
+
     /*
      * @param rawTransaction a RawTransaction istance to be signed
      * @return The transaction signed and encoded without ever broadcasting it

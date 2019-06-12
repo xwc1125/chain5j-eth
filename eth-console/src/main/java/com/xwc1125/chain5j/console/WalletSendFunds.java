@@ -28,16 +28,20 @@ public class WalletSendFunds extends WalletManager {
     private static final String USAGE = "send <walletfile> <destination-address>";
 
     public static void main(String[] args) {
-        if (args.length != 2) {
+        if (args.length != 2 && args.length != 3) {
             exitError(USAGE);
         } else {
-            new WalletSendFunds().run(args[0], args[1]);
+            if (args.length == 2) {
+                new WalletSendFunds().run(null, args[0], args[1]);
+            } else {
+                new WalletSendFunds().run(args[2], args[0], args[1]);
+            }
         }
     }
 
-    private void run(String walletFileLocation, String destinationAddress) {
+    private void run(String icapPrefix, String walletFileLocation, String destinationAddress) {
         File walletFile = new File(walletFileLocation);
-        Credentials credentials = getCredentials(walletFile);
+        Credentials credentials = getCredentials(icapPrefix, walletFile);
         console.printf("Wallet for address " + credentials.getAddress() + " loaded\n");
 
         if (!WalletUtils.isValidAddress(destinationAddress)
@@ -129,7 +133,7 @@ public class WalletSendFunds extends WalletManager {
     private Web3j getEthereumClient() {
         String clientAddress = console.readLine(
                 "Please confirm address of running Ethereum client you wish to send "
-                + "the transfer request to [" + HttpService.DEFAULT_URL + "]: ")
+                        + "the transfer request to [" + HttpService.DEFAULT_URL + "]: ")
                 .trim();
 
         Web3j web3j;

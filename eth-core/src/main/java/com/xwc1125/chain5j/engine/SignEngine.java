@@ -224,7 +224,12 @@ public class SignEngine {
      */
     public static SignRes sign(Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice, BigInteger gas,
                                BigInteger value, Function fun) {
-        return sign(false, credentials, to, nonce, gasPrice, gas, value, fun, (byte) 1);
+        return sign(credentials, to, nonce, gasPrice, gas, value, fun, false);
+    }
+
+    public static SignRes sign(Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice, BigInteger gas,
+                               BigInteger value, Function fun, boolean hasToken) {
+        return sign(false, credentials, to, nonce, gasPrice, gas, value, fun, (byte) 1, hasToken);
     }
 
     /**
@@ -239,8 +244,8 @@ public class SignEngine {
      * @return
      */
     public static SignRes signEIP155(Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice, BigInteger gas,
-                                     BigInteger value, Function fun, int chainId) {
-        return sign(true, credentials, to, nonce, gasPrice, gas, value, fun, chainId);
+                                     BigInteger value, Function fun, int chainId, boolean hasToken) {
+        return sign(true, credentials, to, nonce, gasPrice, gas, value, fun, chainId, hasToken);
     }
 
     /**
@@ -257,31 +262,16 @@ public class SignEngine {
      */
     public static SignRes sign(boolean isEIP155, Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice,
                                BigInteger gas, BigInteger value, Function fun, int chainId) {
-        RawTransaction rawTransaction;
-        if (fun != null) {
-            rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gas, to, value, FunctionEncoder.encode(fun));
-        } else {
-            rawTransaction = RawTransaction.createEtherTransaction(nonce, gasPrice, gas, to, value);
-        }
-        String ret;
+        return sign(isEIP155, credentials, to, nonce, gasPrice, gas, value, fun, chainId, false);
+    }
 
-        if (isEIP155) {
-            ret = signEIP155(rawTransaction, credentials, chainId);
-        } else {
-            ret = sign(rawTransaction, credentials);
-        }
-        SignRes res = new SignRes();
-        res.setRaw_transaction(ret);
-        res.setTransaction_hash(Hash.sha3(ret));
+    public static SignRes sign(boolean isEIP155, Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice,
+                               BigInteger gas, BigInteger value, Function fun, int chainId, boolean hasToken) {
+        String data = null;
         if (fun != null) {
-            String data = FunctionEncoder.encode(fun);
-            System.out.println(String.format("sign nonce:%s; gasPrice:%s; gasLimit:%s; to:%s; value:%s; funName:%s; txHash:%s; data:%s",
-                    nonce.toString(), gasPrice.toString(), gas.toString(), to, value.toString(), fun.getName(), res.getTransaction_hash(), data));
-        } else {
-            System.out.println(String.format("sign nonce:%s; gasPrice:%s; gasLimit:%s; to:%s; value:%s; funName:%s; txHash:%s; data:%s",
-                    nonce.toString(), gasPrice.toString(), gas.toString(), to, value.toString(), null, res.getTransaction_hash(), null));
+            data = FunctionEncoder.encode(fun);
         }
-        return res;
+        return sign(isEIP155, credentials, to, nonce, gasPrice, gas, value, data, chainId, hasToken);
     }
 
     /**
@@ -297,12 +287,12 @@ public class SignEngine {
      * @return
      */
     public static SignRes sign(boolean isEIP155, Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice,
-                               BigInteger gas, BigInteger value, String data, int chainId) {
+                               BigInteger gas, BigInteger value, String data, int chainId, Boolean hasToken) {
         RawTransaction rawTransaction;
         if (StringUtils.isNotEmpty(data)) {
-            rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gas, to, value, data);
+            rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gas, to, value, data, hasToken);
         } else {
-            rawTransaction = RawTransaction.createEtherTransaction(nonce, gasPrice, gas, to, value);
+            rawTransaction = RawTransaction.createEtherTransaction(nonce, gasPrice, gas, to, value, hasToken);
         }
         String ret;
 
@@ -361,9 +351,9 @@ public class SignEngine {
      * @return
      * @throws Exception
      */
-    public static SignRes signTransfer(Credentials credentials,
+    public static SignRes signTransfer(boolean isEIP155, Credentials credentials,
                                        String to, String contractAddress, BigInteger nonce, BigInteger gasPrice,
-                                       BigInteger gas, BigInteger value) throws Exception {
+                                       BigInteger gas, BigInteger value, int chainId, Boolean hasToken) throws Exception {
         if (StringUtils.isEmpty(to)) {
             throw new Exception("the toAddress should not be null");
         }
@@ -381,7 +371,7 @@ public class SignEngine {
             } else {
                 gasLimit = gas;
             }
-            signData = signEther(credentials, nonce, gasPrice, gasLimit, to, value);
+            signData = sign(isEIP155, credentials, to, nonce, gasPrice, gas, value, null, chainId, hasToken);
         } else {
             Address _to = new Address(to);
             Uint256 _value = new Uint256(value);
@@ -396,56 +386,10 @@ public class SignEngine {
                 gasLimit = gas;
             }
             //合约的valus一定只能是0
-            signData = signContract(credentials, nonce, gasPrice, gasLimit, contractAddress, BigInteger.ZERO, dataHex);
+            signData = sign(isEIP155, credentials, to, nonce, gasPrice, gas, BigInteger.ZERO, dataHex, chainId, hasToken);
         }
+
         return signData;
-    }
-
-    /**
-     * 以太坊签名
-     *
-     * @param credentials
-     * @param nonce
-     * @param gasPrice
-     * @param gasLimit
-     * @param to
-     * @param value
-     * @return
-     */
-    private static SignRes signEther(Credentials credentials, BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit,
-                                     String to, BigInteger value) {
-        RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
-                nonce, gasPrice, gasLimit, to, value);
-        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
-        String hexValue = Numeric.toHexString(signedMessage);
-        SignRes res = new SignRes();
-        res.setRaw_transaction(hexValue);
-        res.setTransaction_hash(Hash.sha3(hexValue));
-        return res;
-    }
-
-    /**
-     * 合约类型签名
-     *
-     * @param credentials
-     * @param nonce
-     * @param gasPrice
-     * @param gasLimit
-     * @param contractAddress
-     * @param value
-     * @param data
-     * @return
-     */
-    private static SignRes signContract(Credentials credentials, BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit,
-                                        String contractAddress, BigInteger value, String data) {
-        RawTransaction rawTransaction = RawTransaction.createTransaction(
-                nonce, gasPrice, gasLimit, contractAddress, value, data);
-        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
-        String hexValue = Numeric.toHexString(signedMessage);
-        SignRes res = new SignRes();
-        res.setRaw_transaction(hexValue);
-        res.setTransaction_hash(Hash.sha3(hexValue));
-        return res;
     }
 
 
@@ -509,12 +453,16 @@ public class SignEngine {
      * @return 返回地址
      */
     public static String recoverAddress(String msg, Sign.SignatureData signatureData) {
+        return recoverAddress(null, msg, signatureData);
+    }
+
+    public static String recoverAddress(String icapPrefix, String msg, Sign.SignatureData signatureData) {
         BigInteger publick = null;
         try {
             publick = Sign.signedMessageToKey(msg.getBytes(), signatureData);
         } catch (SignatureException e) {
         }
-        String address = Keys.getAddress(publick);
+        String address = Keys.getAddress(icapPrefix, publick);
         return Numeric.prependHexPrefix(address);
     }
 }

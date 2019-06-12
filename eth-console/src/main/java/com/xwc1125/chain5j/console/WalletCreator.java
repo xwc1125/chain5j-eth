@@ -32,11 +32,12 @@ public class WalletCreator extends WalletManager {
 
     private void run() {
         String password = getPassword("Please enter a wallet file password: ");
+        String icapPrefix = getPassword("Please enter icap prefix or empty: ");
         String destinationDir = getDestinationDir();
         File destination = createDir(destinationDir);
 
         try {
-            String walletFileName = WalletUtils.generateFullNewWalletFile(password, destination);
+            String walletFileName = WalletUtils.generateFullNewWalletFile(icapPrefix, password, destination);
             console.printf("Wallet file " + walletFileName
                     + " successfully created in: " + destinationDir + "\n");
         } catch (CipherException | IOException | InvalidAlgorithmParameterException

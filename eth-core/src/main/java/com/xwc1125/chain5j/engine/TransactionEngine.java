@@ -75,7 +75,11 @@ public class TransactionEngine {
      * @throws Exception
      */
     public static RawTransaction decodeRawTransaction(String txRaw) {
-        return TransactionDecoder.decode(txRaw);
+        return decodeRawTransaction(null, txRaw);
+    }
+
+    public static RawTransaction decodeRawTransaction(String icapPrefix, String txRaw) {
+        return TransactionDecoder.decode(icapPrefix, txRaw);
     }
 
     /**

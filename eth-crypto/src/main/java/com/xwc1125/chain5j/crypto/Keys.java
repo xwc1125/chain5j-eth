@@ -11,6 +11,7 @@ import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Arrays;
 
+import com.xwc1125.chain5j.utils.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.xwc1125.chain5j.utils.Numeric;
@@ -36,7 +37,8 @@ public class Keys {
         }
     }
 
-    private Keys() { }
+    private Keys() {
+    }
 
     /**
      * Create a keypair using SECP-256k1 curve.
@@ -75,15 +77,19 @@ public class Keys {
     }
 
     public static String getAddress(ECKeyPair ecKeyPair) {
-        return getAddress(ecKeyPair.getPublicKey());
+        return getAddress(null, ecKeyPair);
     }
 
-    public static String getAddress(BigInteger publicKey) {
-        return getAddress(
+    public static String getAddress(String icapPrefix, ECKeyPair ecKeyPair) {
+        return getAddress(icapPrefix, ecKeyPair.getPublicKey());
+    }
+
+    public static String getAddress(String icapPrefix, BigInteger publicKey) {
+        return getAddress(icapPrefix,
                 Numeric.toHexStringWithPrefixZeroPadded(publicKey, PUBLIC_KEY_LENGTH_IN_HEX));
     }
 
-    public static String getAddress(String publicKey) {
+    public static String getAddress(String icapPrefix, String publicKey) {
         String publicKeyNoPrefix = Numeric.cleanHexPrefix(publicKey);
 
         if (publicKeyNoPrefix.length() < PUBLIC_KEY_LENGTH_IN_HEX) {
@@ -92,7 +98,12 @@ public class Keys {
                     + publicKeyNoPrefix;
         }
         String hash = Hash.sha3(publicKeyNoPrefix);
-        return hash.substring(hash.length() - ADDRESS_LENGTH_IN_HEX);  // right most 160 bits
+        String address = hash.substring(hash.length() - ADDRESS_LENGTH_IN_HEX);
+        address = "0x" + address;
+        if (StringUtils.isNotEmpty(icapPrefix)) {
+            return ICAPUtils.buildICAP(icapPrefix, address);
+        }
+        return address;  // right most 160 bits
     }
 
     public static byte[] getAddress(byte[] publicKey) {

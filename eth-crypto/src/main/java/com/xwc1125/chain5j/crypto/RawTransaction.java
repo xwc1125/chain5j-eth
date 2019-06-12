@@ -18,14 +18,16 @@ public class RawTransaction {
     private BigInteger value;
     private String data;
     private String token;
+    private Boolean hasToken = false;
 
     protected RawTransaction(BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
-                             BigInteger value, String data) {
+                             BigInteger value, String data, Boolean hasToken) {
         this.nonce = nonce;
         this.gasPrice = gasPrice;
         this.gasLimit = gasLimit;
         this.to = to;
         this.value = value;
+        this.hasToken = hasToken;
 
         if (data != null) {
             this.data = Numeric.cleanHexPrefix(data);
@@ -34,7 +36,7 @@ public class RawTransaction {
 
 
     protected RawTransaction(BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
-                             BigInteger value, String data, String token) {
+                             BigInteger value, String data, String token, Boolean hasToken) {
         this.nonce = nonce;
         this.gasPrice = gasPrice;
         this.gasLimit = gasLimit;
@@ -45,33 +47,46 @@ public class RawTransaction {
             this.data = Numeric.cleanHexPrefix(data);
         }
         this.token = token;
+        this.hasToken = hasToken;
     }
 
     public static RawTransaction createContractTransaction(
             BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, BigInteger value,
-            String init) {
+            String init, Boolean hasToken) {
 
-        return new RawTransaction(nonce, gasPrice, gasLimit, "", value, init);
+        return new RawTransaction(nonce, gasPrice, gasLimit, "", value, init, hasToken);
     }
 
     public static RawTransaction createEtherTransaction(
             BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
             BigInteger value) {
+        return createEtherTransaction(nonce, gasPrice, gasLimit, to, value, false);
+    }
 
-        return new RawTransaction(nonce, gasPrice, gasLimit, to, value, "");
+    public static RawTransaction createEtherTransaction(
+            BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
+            BigInteger value, Boolean hasToken) {
+
+        return new RawTransaction(nonce, gasPrice, gasLimit, to, value, "", hasToken);
 
     }
 
     public static RawTransaction createTransaction(
-            BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to, String data) {
-        return createTransaction(nonce, gasPrice, gasLimit, to, BigInteger.ZERO, data);
+            BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to, String data, Boolean hasToken) {
+        return createTransaction(nonce, gasPrice, gasLimit, to, BigInteger.ZERO, data, hasToken);
     }
 
     public static RawTransaction createTransaction(
             BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
             BigInteger value, String data) {
+        return createTransaction(nonce, gasPrice, gasLimit, to, value, data, false);
+    }
 
-        return new RawTransaction(nonce, gasPrice, gasLimit, to, value, data);
+    public static RawTransaction createTransaction(
+            BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
+            BigInteger value, String data, Boolean hasToken) {
+
+        return new RawTransaction(nonce, gasPrice, gasLimit, to, value, data, hasToken);
     }
 
     public BigInteger getNonce() {
@@ -100,5 +115,13 @@ public class RawTransaction {
 
     public String getToken() {
         return token;
+    }
+
+    public Boolean getHasToken() {
+        return hasToken;
+    }
+
+    public void setHasToken(Boolean hasToken) {
+        this.hasToken = hasToken;
     }
 }

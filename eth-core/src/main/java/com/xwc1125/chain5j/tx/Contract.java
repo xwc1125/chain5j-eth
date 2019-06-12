@@ -47,8 +47,8 @@ public abstract class Contract extends ManagedTransaction {
 
     //https://www.reddit.com/r/ethereum/comments/5g8ia6/attention_miners_we_recommend_raising_gas_limit/
     /**
-     * @deprecated ...
      * @see DefaultGasProvider
+     * @deprecated ...
      */
     public static final BigInteger GAS_LIMIT = BigInteger.valueOf(4_300_000);
 
@@ -135,6 +135,7 @@ public abstract class Contract extends ManagedTransaction {
 
     /**
      * Allow {@code gasPrice} to be set.
+     *
      * @param newPrice gas price to use for subsequent transactions
      * @deprecated use ContractGasProvider
      */
@@ -144,6 +145,7 @@ public abstract class Contract extends ManagedTransaction {
 
     /**
      * Get the current {@code gasPrice} value this contract uses when executing transactions.
+     *
      * @return the gas price set on this contract
      * @deprecated use ContractGasProvider
      */
@@ -284,10 +286,10 @@ public abstract class Contract extends ManagedTransaction {
     /**
      * Given the duration required to execute a transaction.
      *
-     * @param data  to send in transaction
+     * @param data     to send in transaction
      * @param weiValue in Wei to send in transaction
      * @return {@link Optional} containing our transaction receipt
-     * @throws IOException                 if the call to the node fails
+     * @throws IOException          if the call to the node fails
      * @throws TransactionException if the transaction was not mined while waiting
      */
     TransactionReceipt executeTransaction(
@@ -296,7 +298,7 @@ public abstract class Contract extends ManagedTransaction {
 
         TransactionReceipt receipt = send(contractAddress, data, weiValue,
                 gasProvider.getGasPrice(funcName),
-                gasProvider.getGasLimit(funcName));
+                gasProvider.getGasLimit(funcName), false);
 
         if (!receipt.isStatusOK()) {
             throw new TransactionException(
@@ -602,11 +604,11 @@ public abstract class Contract extends ManagedTransaction {
     }
 
     @SuppressWarnings("unchecked")
-    protected static <S extends Type, T> 
-            List<T> convertToNative(List<S> arr) {
+    protected static <S extends Type, T>
+    List<T> convertToNative(List<S> arr) {
         List<T> out = new ArrayList<T>();
         for (Iterator<S> it = arr.iterator(); it.hasNext(); ) {
-            out.add((T)it.next().getValue());
+            out.add((T) it.next().getValue());
         }
         return out;
     }

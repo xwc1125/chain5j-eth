@@ -3,13 +3,14 @@ package com.xwc1125.chain5j.rlp;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import com.xwc1125.chain5j.crypto.ICAPUtils;
 import com.xwc1125.chain5j.utils.Numeric;
 
 /**
  * RLP string type.
  */
 public class RlpString implements RlpType {
-    private static final byte[] EMPTY = new byte[]{ };
+    private static final byte[] EMPTY = new byte[]{};
 
     private final byte[] value;
 
@@ -32,12 +33,31 @@ public class RlpString implements RlpType {
         return Numeric.toHexString(value);
     }
 
+    public String asICAPString() {
+        return encode(value);
+    }
+
+    public static String encode(byte[] inputBytes) {
+        if (inputBytes == null || inputBytes.length == 0) {
+            return "";
+        }
+        BigInteger bigInteger = new BigInteger(inputBytes);
+        String xx = bigInteger.toString(36);
+        if (xx.charAt(0) == '-') {
+            StringBuffer stringBuffer = new StringBuffer(xx);
+            stringBuffer.setCharAt(0, 'f');
+            return stringBuffer.toString();
+        } else {
+            return "z" + xx;
+        }
+    }
+
     public static RlpString create(byte[] value) {
         return new RlpString(value);
     }
 
     public static RlpString create(byte value) {
-        return new RlpString(new byte[]{ value });
+        return new RlpString(new byte[]{value});
     }
 
     public static RlpString create(BigInteger value) {

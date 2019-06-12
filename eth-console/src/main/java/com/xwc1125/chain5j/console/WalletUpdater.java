@@ -22,20 +22,24 @@ public class WalletUpdater extends WalletManager {
     }
 
     public static void main(String[] args) {
-        if (args.length != 1) {
+        if (args.length != 1 && args.length != 2) {
             exitError("You must provide an existing wallet file");
         } else {
-            new WalletUpdater().run(args[0]);
+            if (args.length == 1) {
+                new WalletUpdater().run(null, args[0]);
+            } else {
+                new WalletUpdater().run(args[1], args[0]);
+            }
         }
     }
 
-    public static void main(IODevice console, String walletFileLocation) {
-        new WalletUpdater(console).run(walletFileLocation);
+    public static void main(IODevice console, String icapPrefix, String walletFileLocation) {
+        new WalletUpdater(console).run(icapPrefix, walletFileLocation);
     }
 
-    private void run(String walletFileLocation) {
+    private void run(String icapPrefix, String walletFileLocation) {
         File walletFile = new File(walletFileLocation);
-        Credentials credentials = getCredentials(walletFile);
+        Credentials credentials = getCredentials(icapPrefix, walletFile);
 
         console.printf("Wallet for address " + credentials.getAddress() + " loaded\n");
 
@@ -45,7 +49,7 @@ public class WalletUpdater extends WalletManager {
         File destination = createDir(destinationDir);
 
         try {
-            String walletFileName = WalletUtils.generateWalletFile(
+            String walletFileName = WalletUtils.generateWalletFile(icapPrefix,
                     newPassword, credentials.getEcKeyPair(), destination, true);
             console.printf("New wallet file " + walletFileName
                     + " successfully created in: " + destinationDir + "\n");
