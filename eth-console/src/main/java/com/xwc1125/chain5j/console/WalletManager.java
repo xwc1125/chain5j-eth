@@ -72,20 +72,20 @@ abstract class WalletManager {
         return destination;
     }
 
-    Credentials getCredentials(File walletFile) {
+    Credentials getCredentials(String icapPrefix, File walletFile) {
         if (!walletFile.exists() || !walletFile.isFile()) {
             exitError("Unable to read wallet file: " + walletFile);
         }
-        return loadWalletFile(walletFile);
+        return loadWalletFile(icapPrefix, walletFile);
     }
 
-    private Credentials loadWalletFile(File walletFile) {
+    private Credentials loadWalletFile(String icapPrefix, File walletFile) {
         while (true) {
             char[] password = console.readPassword(
                     "Please enter your existing wallet file password: ");
             String currentPassword = new String(password);
             try {
-                return WalletUtils.loadCredentials(currentPassword, walletFile);
+                return WalletUtils.loadCredentials(icapPrefix, currentPassword, walletFile);
             } catch (CipherException e) {
                 console.printf("Invalid password specified\n");
             } catch (IOException e) {

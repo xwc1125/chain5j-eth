@@ -25,7 +25,7 @@ public class KeyImporter extends WalletManager {
 
     public static void main(String[] args) {
         if (args.length == 1) {
-            new KeyImporter().run(args[0]);
+            new KeyImporter().run(null, args[0]);
         } else {
             new KeyImporter().run();
         }
@@ -35,7 +35,7 @@ public class KeyImporter extends WalletManager {
         new KeyImporter(console).run();
     }
 
-    private void run(String input) {
+    private void run(String icapPrefix, String input) {
         File keyFile = new File(input);
 
         if (keyFile.isFile()) {
@@ -46,33 +46,36 @@ public class KeyImporter extends WalletManager {
                 exitError("Unable to read file " + input);
             }
 
-            createWalletFile(privateKey.trim());
+            createWalletFile(icapPrefix, privateKey.trim());
         } else {
-            createWalletFile(input.trim());
+            createWalletFile(icapPrefix, input.trim());
         }
     }
 
     private void run() {
+        String icapPrefix = console.readLine(
+                "Please enter the icap prefix, and it can empty: ").trim();
         String input = console.readLine(
                 "Please enter the hex encoded private key or key file location: ").trim();
-        run(input);
+
+        run(icapPrefix, input);
     }
 
-    private void createWalletFile(String privateKey) {
+    private void createWalletFile(String icapPrefix, String privateKey) {
         if (!WalletUtils.isValidPrivateKey(privateKey)) {
             exitError("Invalid private key specified, must be "
                     + PRIVATE_KEY_LENGTH_IN_HEX
                     + " digit hex value");
         }
 
-        Credentials credentials = Credentials.create(privateKey);
+        Credentials credentials = Credentials.create(icapPrefix, privateKey);
         String password = getPassword("Please enter a wallet file password: ");
 
         String destinationDir = getDestinationDir();
         File destination = createDir(destinationDir);
 
         try {
-            String walletFileName = WalletUtils.generateWalletFile(
+            String walletFileName = WalletUtils.generateWalletFile(icapPrefix,
                     password, credentials.getEcKeyPair(), destination, true);
             console.printf("Wallet file " + walletFileName
                     + " successfully created in: " + destinationDir + "\n");

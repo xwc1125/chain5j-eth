@@ -59,6 +59,12 @@ public class RawTransaction {
 
     public static RawTransaction createEtherTransaction(
             BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
+            BigInteger value) {
+        return createEtherTransaction(nonce, gasPrice, gasLimit, to, value, false);
+    }
+
+    public static RawTransaction createEtherTransaction(
+            BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
             BigInteger value, Boolean hasToken) {
 
         return new RawTransaction(nonce, gasPrice, gasLimit, to, value, "", hasToken);
@@ -68,6 +74,12 @@ public class RawTransaction {
     public static RawTransaction createTransaction(
             BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to, String data, Boolean hasToken) {
         return createTransaction(nonce, gasPrice, gasLimit, to, BigInteger.ZERO, data, hasToken);
+    }
+
+    public static RawTransaction createTransaction(
+            BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to,
+            BigInteger value, String data) {
+        return createTransaction(nonce, gasPrice, gasLimit, to, value, data, false);
     }
 
     public static RawTransaction createTransaction(

@@ -223,6 +223,11 @@ public class SignEngine {
      * @return
      */
     public static SignRes sign(Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice, BigInteger gas,
+                               BigInteger value, Function fun) {
+        return sign(credentials, to, nonce, gasPrice, gas, value, fun, false);
+    }
+
+    public static SignRes sign(Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice, BigInteger gas,
                                BigInteger value, Function fun, boolean hasToken) {
         return sign(false, credentials, to, nonce, gasPrice, gas, value, fun, (byte) 1, hasToken);
     }
@@ -255,6 +260,11 @@ public class SignEngine {
      * @param chainId
      * @return
      */
+    public static SignRes sign(boolean isEIP155, Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice,
+                               BigInteger gas, BigInteger value, Function fun, int chainId) {
+        return sign(isEIP155, credentials, to, nonce, gasPrice, gas, value, fun, chainId, false);
+    }
+
     public static SignRes sign(boolean isEIP155, Credentials credentials, String to, BigInteger nonce, BigInteger gasPrice,
                                BigInteger gas, BigInteger value, Function fun, int chainId, boolean hasToken) {
         String data = null;

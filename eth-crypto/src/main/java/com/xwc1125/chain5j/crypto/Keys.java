@@ -76,6 +76,10 @@ public class Keys {
         return ECKeyPair.create(keyPair);
     }
 
+    public static String getAddress(ECKeyPair ecKeyPair) {
+        return getAddress(null, ecKeyPair);
+    }
+
     public static String getAddress(String icapPrefix, ECKeyPair ecKeyPair) {
         return getAddress(icapPrefix, ecKeyPair.getPublicKey());
     }
