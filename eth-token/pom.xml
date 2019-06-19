@@ -9,23 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eth-codegen</artifactId>
+    <artifactId>eth-token</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.xwc1125.chain5j</groupId>
             <artifactId>eth-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup</groupId>
-            <artifactId>javapoet</artifactId>
-            <version>${javapoetVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>${picocliVersion}</version>
         </dependency>
     </dependencies>
 </project>
