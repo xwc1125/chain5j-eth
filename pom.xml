@@ -6,7 +6,7 @@
 
     <groupId>com.xwc1125.chain5j</groupId>
     <artifactId>eth</artifactId>
-    <version>4.2.1</version>
+    <version>4.3.1</version>
 
     <packaging>pom</packaging>
 
@@ -37,6 +37,7 @@
         <module>eth-console</module>
         <module>eth-contracts</module>
         <module>eth-geth</module>
+        <module>eth-token</module>
         <module>eth-infura</module>
         <module>eth-pantheon</module>
         <module>eth-rlp</module>

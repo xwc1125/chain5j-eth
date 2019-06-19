@@ -14,9 +14,9 @@ public class ICAPUtilsTest {
 
     @Test
     public void getAddressLenNoPre() {
-        String icap = ICAPUtils.buildICAP("BCOS", "0x73dA1a18Ed4c58223Fb8c2A54D9833DF5329E6bF");
+        String icap = ICAPUtils.buildICAP("JQ", "0x73dA1a18Ed4c58223Fb8c2A54D9833DF5329E6bF");
         System.out.println("icap=" + icap);
-        String decodeICAP = ICAPUtils.decodeICAP("BCOS", icap);
+        String decodeICAP = ICAPUtils.decodeICAP("JQ", icap);
         System.out.println("decodeICAP=" + decodeICAP);
         decodeICAP = ICAPUtils.decodeICAP("JQ", "JQ0903KZ4W1JJS92IJKHOJMP0344Y4W2XMN");
         System.out.println("decodeICAP=" + decodeICAP);
