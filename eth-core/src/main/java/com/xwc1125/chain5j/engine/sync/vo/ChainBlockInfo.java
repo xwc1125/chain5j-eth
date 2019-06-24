@@ -26,4 +26,5 @@ public class ChainBlockInfo extends EthBlock.Block {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
 }

@@ -260,20 +260,34 @@ public class TransactionReceipt {
 
     @Override
     public String toString() {
-        return "TransactionReceipt{"
-                + "transactionHash='" + transactionHash + '\''
-                + ", transactionIndex='" + transactionIndex + '\''
-                + ", blockHash='" + blockHash + '\''
-                + ", blockNumber='" + blockNumber + '\''
-                + ", cumulativeGasUsed='" + cumulativeGasUsed + '\''
-                + ", gasUsed='" + gasUsed + '\''
-                + ", contractAddress='" + contractAddress + '\''
-                + ", root='" + root + '\''
-                + ", status='" + status + '\''
-                + ", from='" + from + '\''
-                + ", to='" + to + '\''
-                + ", logs=" + logs
-                + ", logsBloom='" + logsBloom + '\''
-                + '}';
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("\"transactionHash\":\"")
+                .append(transactionHash).append('\"');
+        sb.append(",\"transactionIndex\":\"")
+                .append(transactionIndex).append('\"');
+        sb.append(",\"blockHash\":\"")
+                .append(blockHash).append('\"');
+        sb.append(",\"blockNumber\":\"")
+                .append(blockNumber).append('\"');
+        sb.append(",\"cumulativeGasUsed\":\"")
+                .append(cumulativeGasUsed).append('\"');
+        sb.append(",\"gasUsed\":\"")
+                .append(gasUsed).append('\"');
+        sb.append(",\"contractAddress\":\"")
+                .append(contractAddress).append('\"');
+        sb.append(",\"root\":\"")
+                .append(root).append('\"');
+        sb.append(",\"status\":\"")
+                .append(status).append('\"');
+        sb.append(",\"from\":\"")
+                .append(from).append('\"');
+        sb.append(",\"to\":\"")
+                .append(to).append('\"');
+        sb.append(",\"logs\":")
+                .append(logs);
+        sb.append(",\"logsBloom\":\"")
+                .append(logsBloom).append('\"');
+        sb.append('}');
+        return sb.toString();
     }
 }
