@@ -452,6 +452,56 @@ public class EthBlock extends Response<EthBlock.Block> {
             result = 31 * result + (getSealFields() != null ? getSealFields().hashCode() : 0);
             return result;
         }
+
+        public String toJsonString() {
+            final StringBuilder sb = new StringBuilder("{");
+            sb.append("\"number\":\"")
+                    .append(number).append('\"');
+            sb.append(",\"hash\":\"")
+                    .append(hash).append('\"');
+            sb.append(",\"parentHash\":\"")
+                    .append(parentHash).append('\"');
+            sb.append(",\"nonce\":\"")
+                    .append(nonce).append('\"');
+            sb.append(",\"sha3Uncles\":\"")
+                    .append(sha3Uncles).append('\"');
+            sb.append(",\"logsBloom\":\"")
+                    .append(logsBloom).append('\"');
+            sb.append(",\"transactionsRoot\":\"")
+                    .append(transactionsRoot).append('\"');
+            sb.append(",\"stateRoot\":\"")
+                    .append(stateRoot).append('\"');
+            sb.append(",\"receiptsRoot\":\"")
+                    .append(receiptsRoot).append('\"');
+            sb.append(",\"author\":\"")
+                    .append(author).append('\"');
+            sb.append(",\"miner\":\"")
+                    .append(miner).append('\"');
+            sb.append(",\"mixHash\":\"")
+                    .append(mixHash).append('\"');
+            sb.append(",\"difficulty\":\"")
+                    .append(difficulty).append('\"');
+            sb.append(",\"totalDifficulty\":\"")
+                    .append(totalDifficulty).append('\"');
+            sb.append(",\"extraData\":\"")
+                    .append(extraData).append('\"');
+            sb.append(",\"size\":\"")
+                    .append(size).append('\"');
+            sb.append(",\"gasLimit\":\"")
+                    .append(gasLimit).append('\"');
+            sb.append(",\"gasUsed\":\"")
+                    .append(gasUsed).append('\"');
+            sb.append(",\"timestamp\":\"")
+                    .append(timestamp).append('\"');
+            sb.append(",\"transactions\":")
+                    .append(transactions);
+            sb.append(",\"uncles\":")
+                    .append(uncles);
+            sb.append(",\"sealFields\":")
+                    .append(sealFields);
+            sb.append('}');
+            return sb.toString();
+        }
     }
 
     public interface TransactionResult<T> {

@@ -1,6 +1,8 @@
 package com.xwc1125.chain5j.engine.sync.vo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xwc1125.chain5j.protocol.core.methods.response.Transaction;
+import com.xwc1125.chain5j.utils.json.JSON;
 
 public class ChainTransactionInfo extends Transaction {
     /**
@@ -45,5 +47,14 @@ public class ChainTransactionInfo extends Transaction {
 
     public void setTransactionReceiptInfo(ChainTransactionReceiptInfo transactionReceiptInfo) {
         this.transactionReceiptInfo = transactionReceiptInfo;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return JSON.getObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

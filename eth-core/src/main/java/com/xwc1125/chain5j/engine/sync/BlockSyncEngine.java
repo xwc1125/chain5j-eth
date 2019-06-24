@@ -1,17 +1,14 @@
 package com.xwc1125.chain5j.engine.sync;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xwc1125.chain5j.engine.sync.vo.ChainBlockInfo;
 import com.xwc1125.chain5j.engine.sync.vo.ChainTransactionInfo;
 import com.xwc1125.chain5j.engine.sync.vo.ChainTransactionReceiptInfo;
-import com.xwc1125.chain5j.protocol.ObjectMapperFactory;
 import com.xwc1125.chain5j.protocol.Web3j;
 import com.xwc1125.chain5j.protocol.core.DefaultBlockParameter;
 import com.xwc1125.chain5j.protocol.core.Request;
 import com.xwc1125.chain5j.protocol.core.methods.response.*;
-import com.xwc1125.chain5j.protocol.http.HttpService;
-import org.reactivestreams.Subscription;
+import com.xwc1125.chain5j.utils.json.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +16,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @Description:
@@ -30,7 +25,6 @@ import java.util.concurrent.CompletableFuture;
  */
 public class BlockSyncEngine {
     static Logger log = LoggerFactory.getLogger(BlockSyncEngine.class);
-    private static ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
     private static final Long WAITING_TIME = 60000L;
     static BlockSyncEngine ins;
     private static Web3j web3j;
@@ -201,8 +195,7 @@ public class BlockSyncEngine {
     void getBlockInfo(EthBlock.Block block) {
         ChainBlockInfo blockInfo = null;
         try {
-            String blockStr = objectMapper.writeValueAsString(block);
-            blockInfo = objectMapper.readValue(blockStr, ChainBlockInfo.class);
+            blockInfo = JSON.getObjectMapper().readValue(block.toJsonString(), ChainBlockInfo.class);
         } catch (JsonProcessingException e) {
             if (callback != null) {
                 callback.logException(e);
@@ -253,8 +246,7 @@ public class BlockSyncEngine {
     }
 
     ChainTransactionInfo getTransaction(Transaction transaction, BigInteger timestamp) throws IOException {
-        String transactionStr = objectMapper.writeValueAsString(transaction);
-        ChainTransactionInfo transactionInfo = objectMapper.readValue(transactionStr, ChainTransactionInfo.class);
+        ChainTransactionInfo transactionInfo = JSON.getObjectMapper().readValue(transaction.toString(), ChainTransactionInfo.class);
         transactionInfo.setTimestamp(timestamp.longValue());
         transactionInfo.setIsSuccess(StatusType.UNKNOWN.value);
         transactionInfo.setStatus(StatusType.OK.value);
@@ -280,8 +272,7 @@ public class BlockSyncEngine {
             }
             TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt().get();
             if (transactionReceipt != null) {
-                String transactionReceiptStr = objectMapper.writeValueAsString(transactionReceipt);
-                transactionReceiptInfo = objectMapper.readValue(transactionReceiptStr, ChainTransactionReceiptInfo.class);
+                transactionReceiptInfo = JSON.getObjectMapper().readValue(transactionReceipt.toString(), ChainTransactionReceiptInfo.class);
             }
         } catch (Exception e) {
             if (callback != null) {
