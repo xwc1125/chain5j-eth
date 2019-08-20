@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.xwc1125.chain5j.protocol.core.DefaultBlockParameter;
-import jnr.constants.platform.NameInfo;
 
 /**
  * Filter implementation as per
@@ -40,9 +39,9 @@ public class EthFilter extends Filter<EthFilter> {
         return toBlock;
     }
 
-    public String getAddress() {
+    public Object getAddress() {
         if (address != null && address.size() > 1) {
-            return address.toString();
+            return address;
         }
         return address.get(0);
     }
