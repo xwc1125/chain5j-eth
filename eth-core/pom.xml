@@ -67,12 +67,6 @@
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.xwc1125.chain5j</groupId>
-            <artifactId>eth-contracts</artifactId>
-            <version>4.3.3</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
