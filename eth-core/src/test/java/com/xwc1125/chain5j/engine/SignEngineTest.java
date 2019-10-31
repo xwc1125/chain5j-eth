@@ -31,8 +31,8 @@ public class SignEngineTest {
             e.printStackTrace();
         }
         String msg = "aa";
-//        Sign.SignatureData signatureData = Sign.signMessageByPublicKey(msg.getBytes(), credentials.getEcKeyPair(), true);
-//        System.out.println(signatureData.toString());
+        Sign.SignatureData signatureData = Sign.signMessage(msg.getBytes(), credentials.getEcKeyPair(), true);
+        System.out.println(signatureData.toString());
 
         BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
         BigInteger publicKey = credentials.getEcKeyPair().getPublicKey();
