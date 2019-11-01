@@ -6,7 +6,18 @@ Base on web3j-java.
 
 ## To get a Git project into your build:
 
-* Maven:
+### Maven 
+
+* Maven Center
+    ```
+    <dependency>
+        <groupId>com.xwc1125.chain5j</groupId>
+        <artifactId>chain5j-eth</artifactId>
+        <version>Tag</version>
+    </dependency>
+    ```
+
+* jitpack:
 
     - Step 1. Add the JitPack repository to your build file
 
@@ -29,8 +40,16 @@ Base on web3j-java.
 	</dependency>
 	```
 	
-* Gradle:
+### Gradle:
 
+* Maven Center
+    ```
+    dependencies {
+	        implementation 'com.xwc1125.chain5j:chain5j-eth:Tag'
+	}
+    ```
+
+* jitpack:
     - Step 1. Add the JitPack repository to your build file
 
     ```
