@@ -6,4 +6,4 @@ package:
 install:
 	mvn clean install -DskipTests
 deploy:
-    mvn clean deploy -P release -Darguments=xwc1125
+	mvn clean deploy -P release -Darguments=xwc1125
