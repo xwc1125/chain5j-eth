@@ -40,7 +40,7 @@ public class Utils {
         }
     }
 
-    static String getSimpleTypeName(Class<?> type) {
+    public static String getSimpleTypeName(Class<?> type) {
         String simpleName = type.getSimpleName().toLowerCase();
 
         if (type.equals(Uint.class) || type.equals(Int.class)

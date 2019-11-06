@@ -35,6 +35,7 @@ public abstract class TypeReference<T extends com.xwc1125.chain5j.abi.datatypes.
         this.indexed = indexed;
     }
 
+    @Override
     public int compareTo(TypeReference<T> o) {
         // taken from the blog post comments - this results in an errror if the
         // type parameter is left out.
