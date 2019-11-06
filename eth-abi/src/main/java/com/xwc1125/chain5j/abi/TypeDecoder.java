@@ -37,7 +37,7 @@ public class TypeDecoder {
 
     static final int MAX_BYTE_LENGTH_FOR_HEX_STRING = Type.MAX_BYTE_LENGTH << 1;
 
-    static <T extends Type> int getSingleElementLength(String input, int offset, Class<T> type) {
+    public static <T extends Type> int getSingleElementLength(String input, int offset, Class<T> type) {
         if (input.length() == offset) {
             return 0;
         } else if (DynamicBytes.class.isAssignableFrom(type)
@@ -50,7 +50,7 @@ public class TypeDecoder {
     }
 
     @SuppressWarnings("unchecked")
-    static <T extends Type> T decode(String input, int offset, Class<T> type) {
+    public static <T extends Type> T decode(String input, int offset, Class<T> type) {
         if (NumericType.class.isAssignableFrom(type)) {
             return (T) decodeNumeric(input.substring(offset), (Class<NumericType>) type);
         } else if (Address.class.isAssignableFrom(type)) {
@@ -141,7 +141,7 @@ public class TypeDecoder {
         return Type.MAX_BIT_LENGTH;
     }
 
-    static int decodeUintAsInt(String rawInput, int offset) {
+    public static int decodeUintAsInt(String rawInput, int offset) {
         String input = rawInput.substring(offset, offset + MAX_BYTE_LENGTH_FOR_HEX_STRING);
         return decode(input, 0, Uint.class).getValue().intValue();
     }
@@ -199,7 +199,7 @@ public class TypeDecoder {
      * Static array length cannot be passed as a type.
      */
     @SuppressWarnings("unchecked")
-    static <T extends Type> T decodeStaticArray(
+    public static <T extends Type> T decodeStaticArray(
             String input, int offset, TypeReference<T> typeReference, int length) {
 
         BiFunction<List<T>, String, T> function = (elements, typeName) -> {
@@ -228,7 +228,7 @@ public class TypeDecoder {
     }
 
     @SuppressWarnings("unchecked")
-    static <T extends Type> T decodeDynamicArray(
+    public static <T extends Type> T decodeDynamicArray(
             String input, int offset, TypeReference<T> typeReference) {
 
         int length = decodeUintAsInt(input, offset);

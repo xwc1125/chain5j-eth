@@ -6,7 +6,7 @@
 
     <groupId>com.xwc1125.chain5j</groupId>
     <artifactId>chain5j-eth</artifactId>
-    <version>4.3.6</version>
+    <version>4.3.7</version>
 
     <packaging>pom</packaging>
 
@@ -32,7 +32,7 @@
         <connection>scm:https://github.com/xwc1125/chain5j-eth.git</connection>
         <developerConnection>scm:https://github.com/xwc1125/chain5j-eth.git</developerConnection>
         <url>https://github.com/xwc1125/chain5j-eth.git</url>
-        <tag>v${project.version}</tag>
+        <tag>${project.version}</tag>
     </scm>
 
     <properties>
@@ -88,11 +88,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
 
     <profiles>
         <profile>
@@ -239,5 +234,15 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

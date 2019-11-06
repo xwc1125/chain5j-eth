@@ -35,7 +35,7 @@ public class FunctionInputDecoder {
      * invalid response
      */
     public static InputData decode(
-            String rawInput, String method, List<TypeReference<?>> inputParameters) {
+            String rawInput, String method, List<TypeReference<?>> inputParameters) throws Exception {
         String methodSign = rawInput.substring(0, 10);
         String input = rawInput.substring(10);
 
@@ -92,7 +92,7 @@ public class FunctionInputDecoder {
     }
 
     private static InputData build(
-            String methodSign, String input, String methodName, List<TypeReference<?>> inputParameters) {
+            String methodSign, String input, String methodName, List<TypeReference<?>> inputParameters) throws Exception {
         List<Type> results = new ArrayList<>(inputParameters.size());
         StringBuilder resultMethod = new StringBuilder();
         if (StringUtils.isNotEmpty(methodName)) {
@@ -148,8 +148,7 @@ public class FunctionInputDecoder {
         if (!methodSignature.startsWith(UNKNOWN)) {
             String methodId = buildMethodId(methodSignature);
             if (!methodSign.startsWith(methodId)) {
-                log.error("methodSignature is not the same");
-                methodSignature = "error:" + methodSignature;
+                throw new Exception("methodSignature is not the same");
             }
         }
         return new InputData(methodSignature, results);
@@ -195,5 +194,6 @@ public class FunctionInputDecoder {
         public void setInputParameters(List<Type> inputParameters) {
             this.inputParameters = inputParameters;
         }
+
     }
 }
