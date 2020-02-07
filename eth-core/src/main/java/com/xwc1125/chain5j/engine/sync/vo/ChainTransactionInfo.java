@@ -1,6 +1,7 @@
 package com.xwc1125.chain5j.engine.sync.vo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 import com.xwc1125.chain5j.protocol.core.methods.response.Transaction;
 import com.xwc1125.chain5j.utils.json.JSON;
 
@@ -51,10 +52,7 @@ public class ChainTransactionInfo extends Transaction {
 
     @Override
     public String toString() {
-        try {
-            return JSON.getObjectMapper().writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }
