@@ -4,8 +4,10 @@ import java.math.BigInteger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.xwc1125.chain5j.protocol.ObjectMapperFactory;
 import com.xwc1125.chain5j.utils.Numeric;
+import com.xwc1125.chain5j.utils.json.JSON;
 
 /**
  * Transaction object used by both {@link EthTransaction} and {@link EthBlock}.
@@ -25,6 +27,7 @@ public class Transaction {
     private String gasPrice;
     private String gas;
     private String input;
+    private String token;
     private String creates;
     private String publicKey;
     private String raw;
@@ -37,7 +40,8 @@ public class Transaction {
 
     public Transaction(String hash, String nonce, String blockHash, String blockNumber,
                        String transactionIndex, String from, String to, String value,
-                       String gas, String gasPrice, String input, String creates,
+                       String gas, String gasPrice, String input,
+                       String token, String creates,
                        String publicKey, String raw, String r, String s, long v) {
         this.hash = hash;
         this.nonce = nonce;
@@ -50,6 +54,7 @@ public class Transaction {
         this.gasPrice = gasPrice;
         this.gas = gas;
         this.input = input;
+        this.token = token;
         this.creates = creates;
         this.publicKey = publicKey;
         this.raw = raw;
@@ -168,6 +173,14 @@ public class Transaction {
 
     public void setInput(String input) {
         this.input = input;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getCreates() {
@@ -335,4 +348,9 @@ public class Transaction {
         return result;
     }
 
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 }

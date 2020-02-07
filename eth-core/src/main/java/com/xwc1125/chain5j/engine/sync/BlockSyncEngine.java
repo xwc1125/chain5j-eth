@@ -1,6 +1,7 @@
 package com.xwc1125.chain5j.engine.sync;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 import com.xwc1125.chain5j.engine.sync.vo.ChainBlockInfo;
 import com.xwc1125.chain5j.engine.sync.vo.ChainTransactionInfo;
 import com.xwc1125.chain5j.engine.sync.vo.ChainTransactionReceiptInfo;
@@ -246,7 +247,9 @@ public class BlockSyncEngine {
     }
 
     ChainTransactionInfo getTransaction(Transaction transaction, BigInteger timestamp) throws IOException {
-        ChainTransactionInfo transactionInfo = JSON.getObjectMapper().readValue(transaction.toString(), ChainTransactionInfo.class);
+        Gson gson = new Gson();
+        ChainTransactionInfo transactionInfo = gson.fromJson(transaction.toString(), ChainTransactionInfo.class);
+//        ChainTransactionInfo transactionInfo = JSON.getObjectMapper().readValue(transaction.toString(), ChainTransactionInfo.class);
         transactionInfo.setTimestamp(timestamp.longValue());
         transactionInfo.setIsSuccess(StatusType.UNKNOWN.value);
         transactionInfo.setStatus(StatusType.OK.value);

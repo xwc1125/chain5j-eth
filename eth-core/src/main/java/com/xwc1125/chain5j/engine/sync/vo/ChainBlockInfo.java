@@ -1,5 +1,6 @@
 package com.xwc1125.chain5j.engine.sync.vo;
 
+import com.google.gson.Gson;
 import com.xwc1125.chain5j.protocol.core.methods.response.EthBlock;
 
 import java.util.List;
@@ -27,4 +28,9 @@ public class ChainBlockInfo extends EthBlock.Block {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 }
