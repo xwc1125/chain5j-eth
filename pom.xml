@@ -6,7 +6,7 @@
 
     <groupId>com.xwc1125.chain5j</groupId>
     <artifactId>chain5j-eth</artifactId>
-    <version>4.3.7</version>
+    <version>4.3.8</version>
 
     <packaging>pom</packaging>
 
