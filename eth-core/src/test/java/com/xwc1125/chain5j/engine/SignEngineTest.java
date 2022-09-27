@@ -1,14 +1,12 @@
 package com.xwc1125.chain5j.engine;
 
 import com.xwc1125.chain5j.crypto.Credentials;
+import com.xwc1125.chain5j.crypto.Hash;
+import com.xwc1125.chain5j.crypto.RawTransaction;
 import com.xwc1125.chain5j.crypto.Sign;
-import com.xwc1125.chain5j.crypto.WalletUtils;
+import com.xwc1125.chain5j.crypto.TransactionUtils;
 import org.junit.Test;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NullCipher;
 import java.math.BigInteger;
 
 /**
@@ -23,9 +21,8 @@ public class SignEngineTest {
     public void signMsg() {
         Credentials credentials = null;
         try {
-//            credentials = WalletEngine.loadCredentialsByPrivateKey("0x587ca4a15bc4d239cfba433dda03366506e99ecd2c529216eb3168b3e7806257");
-            credentials = WalletEngine.loadCredentialsByMnemonics("prosper choose boat soon toy income cover weird health income dress buzz");
-//            credentials = WalletUtils.loadBip39Credentials("", "prosper choose boat soon toy income cover weird health income dress buzz");
+            credentials = WalletEngine.loadCredentialsByPrivateKey(
+                    "0x587ca4a15bc4d239cfba433dda03366506e99ecd2c529216eb3168b3e7806257");
             System.out.println("address:" + credentials.getAddress());
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,7 +33,6 @@ public class SignEngineTest {
 
         BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();
         BigInteger publicKey = credentials.getEcKeyPair().getPublicKey();
-
 
 //        Cipher cipher = new NullCipher();
 //        // Cipher.getInstance(ALGORITHM, keyFactory.getProvider());
@@ -50,5 +46,21 @@ public class SignEngineTest {
 //        } catch (BadPaddingException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    @Test
+    public void signTx() {
+        Credentials credentials = WalletEngine.loadCredentialsByPrivateKey(
+                "0x587ca4a15bc4d239cfba433dda03366506e99ecd2c529216eb3168b3e7806257");
+        RawTransaction rawTransaction = RawTransaction.createEtherTransaction(BigInteger.ZERO, BigInteger.ZERO,
+                BigInteger.valueOf(21000), "0x9254E62FBCA63769DFd4Cc8e23f630F0785610CE",
+                BigInteger.ZERO);
+        String rawTxHex = SignEngine.sign(rawTransaction, credentials);
+        System.out.println(rawTxHex);
+        String txHashLocal = Hash.sha3(rawTxHex);
+        System.out.println(txHashLocal);
+
+        String hex = TransactionUtils.generateTransactionHashHexEncoded(rawTransaction, credentials);
+        System.out.println(hex);
     }
 }

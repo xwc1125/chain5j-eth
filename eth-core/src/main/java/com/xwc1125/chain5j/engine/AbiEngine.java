@@ -1,13 +1,11 @@
 package com.xwc1125.chain5j.engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xwc1125.chain5j.abi.FunctionInputDecoder;
-import com.xwc1125.chain5j.abi.TypeDecoder;
-import com.xwc1125.chain5j.abi.TypeReference;
-import com.xwc1125.chain5j.abi.Utils;
+import com.xwc1125.chain5j.abi.*;
 import com.xwc1125.chain5j.abi.datatypes.*;
 import com.xwc1125.chain5j.abi.datatypes.generated.AbiTypes;
 import com.xwc1125.chain5j.crypto.Hash;
+import com.xwc1125.chain5j.engine.abi.AbiDefinitions;
 import com.xwc1125.chain5j.engine.abi.MethodInfo;
 import com.xwc1125.chain5j.protocol.ObjectMapperFactory;
 import com.xwc1125.chain5j.protocol.core.methods.response.AbiDefinition;
@@ -101,6 +99,10 @@ public class AbiEngine {
             }
         }
         return inputData;
+    }
+
+    public static String getMethodId(String methodName, List<AbiDefinition.NamedType> inputs) {
+        return FunctionEncoder.buildMethodId(buildMethodSignature(methodName, inputs));
     }
 
     /**
@@ -222,10 +224,27 @@ public class AbiEngine {
      * @Author: xwc1125
      * @Date: 2019-11-05 16:01:45
      */
-    public static List<AbiDefinition> loadContractDefinition(String abi) throws IOException {
+    public static List<AbiDefinition> loadABI(String abi) throws IOException {
         ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
         AbiDefinition[] abiDefinition = objectMapper.readValue(abi, AbiDefinition[].class);
         return Arrays.asList(abiDefinition);
+    }
+
+    public static AbiDefinitions loadABIFilter(String abi) throws IOException {
+        AbiDefinitions abiDefinitions = new AbiDefinitions();
+        List<AbiDefinition> abiDefinitionList = loadABI(abi);
+        for (AbiDefinition abiDefinition : abiDefinitionList) {
+            if (abiDefinition.getType().equals("constructor")) {
+                abiDefinitions.setConstructor(abiDefinition);
+            } else if (abiDefinition.getType().equals("function")) {
+                abiDefinitions.addFunction(abiDefinition.getName(), abiDefinition);
+            } else if (abiDefinition.getType().equals("event")) {
+                abiDefinitions.addEvent(abiDefinition.getName(), abiDefinition);
+            } else {
+                // skip and do nothing
+            }
+        }
+        return abiDefinitions;
     }
 
     /**
@@ -272,7 +291,7 @@ public class AbiEngine {
      * @Author: xwc1125
      * @Date: 2019-11-05 15:21:31
      */
-    static TypeInfo buildTypeInfo(String typeDeclaration) {
+    public static TypeInfo buildTypeInfo(String typeDeclaration) {
         String type = trimStorageDeclaration(typeDeclaration);
         Matcher matcher = pattern.matcher(type);
         TypeInfo typeInfo = new TypeInfo();
@@ -507,7 +526,7 @@ public class AbiEngine {
         }
     }
 
-    static List<TypeInfo> buildTypeInfos(List<AbiDefinition.NamedType> namedTypes) {
+    public static List<TypeInfo> buildTypeInfos(List<AbiDefinition.NamedType> namedTypes) {
         List<TypeInfo> result = new ArrayList<>(namedTypes.size());
         for (AbiDefinition.NamedType namedType : namedTypes) {
             result.add(buildTypeInfo(namedType.getType()));
