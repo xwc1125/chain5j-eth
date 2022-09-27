@@ -9,15 +9,42 @@ package com.xwc1125.chain5j.iban;
  * @date 2018/10/30 10:35<br>
  */
 public class BaseFunc {
-    public static String padLeft(String src, int bytes) {
-        while (src.length() < bytes * 2) {
+
+    private static int byteLen = 2;
+
+    /**
+     * 左侧加0操作
+     *
+     * @param src
+     * @param bytes
+     * @return
+     */
+    public static String padLeftForBytes(String src, int bytes) {
+        while (src.length() < bytes * byteLen) {
             src = '0' + src;
         }
         return src;
     }
 
     /**
+     * 左侧加0操作
      *
+     * @param src
+     * @param strLen
+     * @return
+     */
+    public static String padLeft(String src, int strLen) {
+        if (strLen % byteLen != 0) {
+            // 不是2的倍数，或默认加1
+            strLen = strLen + 1;
+        }
+        while (src.length() < strLen) {
+            src = '0' + src;
+        }
+        return src;
+    }
+
+    /**
      * @param iban
      * @return
      */
@@ -39,7 +66,6 @@ public class BaseFunc {
     }
 
     /**
-     *
      * @param iban
      * @return
      */

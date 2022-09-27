@@ -222,7 +222,7 @@ public class TestAbi2 {
 //            FieldSpec fieldSpec = testAbi2.parseInput(dataHex, list1);
 //            System.out.println(fieldSpec);
 
-            list1 = AbiEngine.loadContractDefinition(abi);
+            list1 = AbiEngine.loadABI(abi);
             FunctionInputDecoder.InputData inputData = AbiEngine.parseInput(dataHex, list1);
             if (inputData != null) {
                 System.out.println(inputData.getMethod());

@@ -320,7 +320,7 @@ public class TestAbi {
                     "\t}\n" +
                     "]";
             try {
-                List<AbiDefinition> list1 = AbiEngine.loadContractDefinition(abi);
+                List<AbiDefinition> list1 = AbiEngine.loadABI(abi);
                 System.out.println(list1);
 
 
@@ -804,7 +804,7 @@ public class TestAbi {
                 "\t}\n" +
                 "]";
         try {
-            List<AbiDefinition> list1 = AbiEngine.loadContractDefinition(abi);
+            List<AbiDefinition> list1 = AbiEngine.loadABI(abi);
             System.out.println(list1);
 
             String dataHex = "0xfc5575d20000000000000000000000000000000000000000000000000000000000000001000000000000000000000000353c02434de6c99f5587b62ae9d6da2bd776daa70000000000000000000000000000000000000000000000000000000000000001";
@@ -990,7 +990,7 @@ public class TestAbi {
                 "\t}\n" +
                 "]";
         try {
-            List<AbiDefinition> list1 = AbiEngine.loadContractDefinition(abi);
+            List<AbiDefinition> list1 = AbiEngine.loadABI(abi);
             System.out.println(list1);
 
             // setA(uint8)

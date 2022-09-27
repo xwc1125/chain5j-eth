@@ -1,6 +1,7 @@
 package com.xwc1125.chain5j.protocol.core.methods.response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,7 +23,7 @@ public class AbiDefinition {
      * since multiple functions with the same signature that only differ in mutability are not
      * allowed in Solidity.</p>
      * <p>
-     *     Valid values are:
+     * Valid values are:
      *     <ul>
      *         <li>pure</li>
      *         <li>view</li>
@@ -32,7 +33,7 @@ public class AbiDefinition {
      * </p>
      */
     private String stateMutability;
-    
+
     public AbiDefinition() {
     }
 
@@ -42,8 +43,8 @@ public class AbiDefinition {
     }
 
     public AbiDefinition(boolean constant, List<NamedType> inputs, String name,
-            List<NamedType> outputs, String type, boolean payable,
-            String stateMutability) {
+                         List<NamedType> outputs, String type, boolean payable,
+                         String stateMutability) {
         this.constant = constant;
         this.inputs = inputs;
         this.name = name;
@@ -181,6 +182,28 @@ public class AbiDefinition {
             this.name = name;
             this.type = type;
             this.indexed = indexed;
+        }
+
+        public String getTypeAsString(List<NamedType> components) {
+            // not tuple, return
+            if (!type.startsWith("tuple")) {
+                return type;
+            }
+
+            String tupleRawString = getTupleRawTypeAsString(components);
+            String result = type.replaceAll("tuple", "(" + tupleRawString + ")");
+            return result;
+        }
+
+        private String getTupleRawTypeAsString(List<NamedType> components) {
+            StringBuilder result = new StringBuilder();
+            String params =
+                    components
+                            .stream()
+                            .map(abi -> abi.getTypeAsString(components))
+                            .collect(Collectors.joining(","));
+            result.append(params);
+            return result.toString();
         }
 
         public String getName() {

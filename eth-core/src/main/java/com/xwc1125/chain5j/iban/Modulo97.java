@@ -39,22 +39,22 @@ public abstract class Modulo97 {
      * digits for a MOD-97 verifiable string. If the existing check digits are any other value, this method will return
      * {@code 1} if the input checksums correctly.</p>
      * <p>
-     * You may want to use {@link #calculateCheckDigits(CharSequence)} or {@link #verifyCheckDigits(CharSequence)}
+     * You may want to use {@link #calculateCheckDigits(int, CharSequence)} or {@link #verifyCheckDigits(int, CharSequence)}
      * instead of this method.</p>
      *
      * @param input the input, which should be at least five characters excluding spaces.
      * @return the check digits calculated for the given IBAN.
      * @throws IllegalArgumentException if the input is in some way invalid.
-     * @see #calculateCheckDigits(CharSequence)
-     * @see #verifyCheckDigits(CharSequence)
+     * @see #calculateCheckDigits(int, CharSequence)
+     * @see #verifyCheckDigits(int, CharSequence)
      */
-    public static int checksum(CharSequence input) {
+    public static int checksum(int prefixLen, CharSequence input) {
         if (input == null || !atLeastFiveNonSpaceCharacters(input)) {
             throw new IllegalArgumentException("The input must be non-null and contain at least five non-space characters.");
         }
         final char[] buffer = new char[input.length() * 2];
-        int offset = transform(input, 4, input.length(), buffer, 0);
-        offset = transform(input, 0, 4, buffer, offset);
+        int offset = transform(input, prefixLen + 2, input.length(), buffer, 0);
+        offset = transform(input, 0, prefixLen + 2, buffer, offset);
         final BigInteger sum = new BigInteger(new String(buffer, 0, offset));
         final BigInteger remainder = sum.remainder(NINETY_SEVEN);
         return remainder.intValue();
@@ -64,26 +64,26 @@ public abstract class Modulo97 {
      * Calculates the check digits to be used in a MOD97 checked string.
      *
      * @param input the input; the characters at indices 2 and 3 <strong>must</strong> be {@code '0'}. The input must
-     *              also satisfy the criteria defined in {@link #checksum(CharSequence)}.
+     *              also satisfy the criteria defined in {@link #checksum(int, CharSequence)}.
      * @return the check digits to be used at indices 2 and 3 to make the input MOD97 verifiable.
      * @throws IllegalArgumentException if the input is in some way invalid.
      */
-    public static int calculateCheckDigits(CharSequence input) {
+    public static int calculateCheckDigits(int prefixLen, CharSequence input) {
         if (input == null || input.length() < 5 || input.charAt(2) != '0' || input.charAt(3) != '0') {
             throw new IllegalArgumentException("The input must be non-null, have a minimum length of five characters, and the characters at indices 2 and 3 must be '0'.");
         }
-        return 98 - checksum(input);
+        return 98 - checksum(prefixLen, input);
     }
 
     /**
      * Determines whether the given input has a valid MOD97 checksum.
      *
-     * @param input the input to verify, it must meet the criteria defined in {@link #checksum(CharSequence)}.
+     * @param input the input to verify, it must meet the criteria defined in {@link #checksum(int, CharSequence)}.
      * @return {@code true} if the input passes checksum verification, {@code false} otherwise.
      * @throws IllegalArgumentException if the input is in some way invalid.
      */
-    public static boolean verifyCheckDigits(CharSequence input) {
-        return checksum(input) == 1;
+    public static boolean verifyCheckDigits(int prefixLen, CharSequence input) {
+        return checksum(prefixLen, input) == 1;
     }
 
     /**
@@ -120,7 +120,6 @@ public abstract class Modulo97 {
     }
 
     /**
-     *
      * @param input
      * @return
      */

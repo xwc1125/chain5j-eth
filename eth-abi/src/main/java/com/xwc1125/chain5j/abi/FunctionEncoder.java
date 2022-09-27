@@ -19,7 +19,8 @@ import com.xwc1125.chain5j.utils.Numeric;
  */
 public class FunctionEncoder {
 
-    private FunctionEncoder() { }
+    public FunctionEncoder() {
+    }
 
     public static String encode(Function function) {
         List<Type> parameters = function.getInputParameters();
@@ -41,7 +42,7 @@ public class FunctionEncoder {
         int dynamicDataOffset = getLength(parameters) * Type.MAX_BYTE_LENGTH;
         StringBuilder dynamicData = new StringBuilder();
 
-        for (Type parameter:parameters) {
+        for (Type parameter : parameters) {
             String encodedValue = TypeEncoder.encode(parameter);
 
             if (TypeEncoder.isDynamic(parameter)) {
@@ -61,7 +62,7 @@ public class FunctionEncoder {
 
     private static int getLength(List<Type> parameters) {
         int count = 0;
-        for (Type type:parameters) {
+        for (Type type : parameters) {
             if (type instanceof StaticArray) {
                 count += ((StaticArray) type).getValue().size();
             } else {
@@ -71,7 +72,7 @@ public class FunctionEncoder {
         return count;
     }
 
-    static String buildMethodSignature(String methodName, List<Type> parameters) {
+    public static String buildMethodSignature(String methodName, List<Type> parameters) {
         StringBuilder result = new StringBuilder();
         result.append(methodName);
         result.append("(");
@@ -83,7 +84,7 @@ public class FunctionEncoder {
         return result.toString();
     }
 
-    static String buildMethodId(String methodSignature) {
+    public static String buildMethodId(String methodSignature) {
         byte[] input = methodSignature.getBytes();
         byte[] hash = Hash.sha3(input);
         return Numeric.toHexString(hash).substring(0, 10);
